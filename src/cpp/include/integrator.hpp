@@ -547,7 +547,7 @@ class PhotonMapping : public Integrator
                         samplers[i] = sampler.clone();
                         samplers[i]->setSeed(sampler.getSeed() * (i + 1));
                 }
-                int maxDepthPosible = 0;
+                int maxDepthPossible = 0;
 // build global photon map
 // photon tracing
 #ifdef __OUTPUT__
@@ -705,13 +705,13 @@ class PhotonMapping : public Integrator
                                         }
                                 }
 
-                                if (d > maxDepthPosible) {
-                                        maxDepthPosible = d;
+                                if (d > maxDepthPossible) {
+                                        maxDepthPossible = d;
                                 }
                         }
                 }
 
-                std::cout << "Max depth possible: " << maxDepthPosible
+                std::cout << "Max depth possible: " << maxDepthPossible
                           << std::endl;
 // build photon map
 #ifdef __OUTPUT__

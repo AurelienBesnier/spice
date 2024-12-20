@@ -28,11 +28,12 @@ def pgl_to_spice(scene: pgl.Scene):
         refl = sh.appearance.ambient.red / 255.0
         specular = sh.appearance.specular.red / 255.0
 
+
         # using mat Phong
         illum = 1
 
         if trans > 0.0:
-            # illum = 9
+            illum = 9
             print("Transparent material: " + material_name)
 
         shininess = sh.appearance.shininess

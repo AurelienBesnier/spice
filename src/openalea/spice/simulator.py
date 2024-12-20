@@ -410,8 +410,8 @@ class Simulator:
 
             print("Wavelength:", current_band["start"], "-", current_band["end"])
             average_wavelength = (current_band["start"] + current_band["end"]) / 2
-
-            self.applyWavelengthProperties(self.scene, current_band, average_wavelength)
+            if average_wavelength != 0: # then use actual wavelength sim
+                self.applyWavelengthProperties(self.scene, current_band, average_wavelength)
 
             # create integrator
             self.scene.tnear = self.configuration.T_MIN
@@ -703,7 +703,7 @@ class Simulator:
             points = k3d.points(
                 positions,
                 point_size=1 * self.configuration.SCALE_FACTOR,
-                shader="3d",
+                shader="dot",
                 attribute=lights,
                 color_map=matplotlib_color_maps.Rainbow,
                 color_range=[0, max(light_range, default=0) + n_light],

@@ -6,9 +6,10 @@
 minimal but extensible header only implementation of photon mapping in C++.
 
 # How to compile:
+Enter main directory, 
 create and activate the conda environment:
 ```bash
-mamba env create -f environment.yml
+mamba env create -f ./conda/environment.yml
 mamba activate photonmap
 ```
 To install as a Python library:
@@ -18,7 +19,7 @@ python -m pip install ./
 
 To compile the source code without installing (useful for debugging):
 ```bash
-mkdir ./build && cd ./build
+[ -d ./build ] || mkdir ./build; cd ./build
 cmake -DCMAKE_BUILD_TYPE=Debug ../
 make -j
 ```

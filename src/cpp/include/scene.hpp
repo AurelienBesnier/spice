@@ -928,10 +928,6 @@ class Scene
                 rtcAttachGeometry(scene, geom);
                 rtcReleaseGeometry(geom);
 
-                // for(size_t i = 0; i < geos.size(); i++) {
-                //   geos[i].populateGeo(scene, device);
-                // }
-
                 rtcCommitScene(scene);
         }
 

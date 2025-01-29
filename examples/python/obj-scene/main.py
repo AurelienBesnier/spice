@@ -6,21 +6,21 @@ from pathlib import Path
 from openalea.spice.libspice_core import *
 
 if __name__ == '__main__':
-    n_samples = 32
-    n_photons = 100000
-    n_estimation_global = 95
-    n_photons_caustics_multiplier = 20
-    n_estimation_caustics = 100
-    final_gathering_depth = 0
-    max_depth = 50
+    n_samples = 12
+    n_photons = int(1e6)
+    n_estimation_global = 100
+    n_photons_caustics_multiplier = 10
+    n_estimation_caustics = 50
+    final_gathering_depth = 4
+    max_depth = 25
     
-    aspect_ratio = 4/3
+    aspect_ratio = 16/9
     image_width = 512
     image_height = int(image_width / aspect_ratio)
     image = Image(image_width, image_height)
 
-    lookfrom = Vec3(6.1, 2.4, -7)
-    lookat = Vec3(6.6, 2.0, 1.0)
+    lookfrom = Vec3(-800, 100, 0)
+    lookat = Vec3(110, 50, 50)
     vup = Vec3(0, -1, 0)
     vfov = 20.0
     dist_to_focus = 5.0
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     print("Creating Scene..")
     scene = Scene()
     scene.loadModel(str(Path.home() / 'models/Sponza/sponza.obj'))
-    scene.addPointLight(Vec3(0,0,50), 1000, Vec3(1,1,1))
+    scene.addPointLight(Vec3(0,-50,0), 500, Vec3(1,1,1))
     scene.build()
 
     print("Done!")

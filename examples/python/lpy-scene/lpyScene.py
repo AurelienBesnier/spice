@@ -4,6 +4,7 @@ from openalea.spice.libspice_core import *
 from openalea.lpy import *
 from openalea.plantgl.all import Tesselator
 
+
 def watts_to_emission(w):
     """
     Converts watts to emissive power.
@@ -11,6 +12,7 @@ def watts_to_emission(w):
     :return: the emission strength.
     """
     return w * 2.0 / 10.0
+
 
 def flatten(lt: list) -> list:
     """
@@ -76,9 +78,21 @@ def addModel(lscene, tr, tr2shmap, scene):
         specular_b = float(sh.appearance.specular.blue) / 255.0
         transparency = sh.appearance.transparency
         illum = 9  # to use the leaf bxdf
-        scene.addFaceInfos(vertex, index, normals, Vec3(r, g, b), Vec3(specular_r, specular_g, specular_b),
-                           Vec3(ambient_r, ambient_g, ambient_b), shininess, transparency, illum, 1.0,
-                           0.5, 0.5, 0.8)
+        scene.addFaceInfos(
+            vertex,
+            index,
+            normals,
+            Vec3(r, g, b),
+            Vec3(specular_r, specular_g, specular_b),
+            Vec3(ambient_r, ambient_g, ambient_b),
+            shininess,
+            transparency,
+            illum,
+            1.0,
+            0.5,
+            0.5,
+            0.8,
+        )
         for _ in mesh.indexList:
             tr2shmap[ctr] = sh.id
             ctr += 1
@@ -95,8 +109,8 @@ def createLpyScene(filename: str, t: int, tr2shmap: dict):
 
     # Adding a light
     pos = Vec3(float(0), float(0), float(30))
-        # print(emission)
-    scene.addPointLight(pos, watts_to_emission(56000), Vec3(1,1,1))
+    # print(emission)
+    scene.addPointLight(pos, watts_to_emission(56000), Vec3(1, 1, 1))
 
     return scene
 
@@ -127,7 +141,7 @@ def compute_energy(tr2shmap, integrator):
         print("organ n°" + str(k) + " has " + str(v) + " photons on it")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     width = 512
     height = 512
     n_samples = 5
@@ -138,8 +152,7 @@ if __name__ == '__main__':
     final_gathering_depth = 0
     max_depth = 100
 
-    
-    aspect_ratio = 4/3
+    aspect_ratio = 4 / 3
     image_width = 512
     image_height = int(image_width / aspect_ratio)
     image = Image(image_width, image_height)
@@ -151,9 +164,7 @@ if __name__ == '__main__':
     dist_to_focus = 5.0
     aperture = 0.01
 
-    camera = Camera(
-        lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus
-    )
+    camera = Camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus)
 
     print("Creating Scene..")
     tr2shmap = {}
@@ -164,9 +175,14 @@ if __name__ == '__main__':
     print("Done!")
 
     print("Building photonMap...")
-    integrator = PhotonMapping(n_photons, n_estimation_global,
-                               n_photons_caustics_multiplier, n_estimation_caustics,
-                               final_gathering_depth, max_depth)
+    integrator = PhotonMapping(
+        n_photons,
+        n_estimation_global,
+        n_photons_caustics_multiplier,
+        n_estimation_caustics,
+        final_gathering_depth,
+        max_depth,
+    )
 
     sampler = UniformSampler()
 
@@ -175,33 +191,33 @@ if __name__ == '__main__':
 
     print("Printing photonmap image...")
     visualizePhotonMap(
-                integrator,
-                scene,
-                image,
-                image_height,
-                image_width,
-                camera,
-                n_photons,
-                max_depth,
-                "photonmap.ppm",
-                sampler,
-            )
+        integrator,
+        scene,
+        image,
+        image_height,
+        image_width,
+        camera,
+        n_photons,
+        max_depth,
+        "photonmap.ppm",
+        sampler,
+    )
     print("Done!")
 
     print("Rendering image...")
     print("Rendering image...")
     image = Image(image_width, image_height)
     Render(
-            sampler,
-            image,
-            image_height,
-            image_width,
-            n_samples,
-            camera,
-            integrator,
-            scene,
-            "output-photonmapping.ppm",
-        )
+        sampler,
+        image,
+        image_height,
+        image_width,
+        n_samples,
+        camera,
+        integrator,
+        scene,
+        "output-photonmapping.ppm",
+    )
     compute_energy(tr2shmap, integrator)
 
     print("Done!")

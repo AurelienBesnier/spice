@@ -177,8 +177,10 @@ class Simulator:
         self.scene = libspice_core.Scene()
         self.list_virtual_sensor = []
         self.virtual_sensor_triangle_dict = {}
+        self.virtual_sensor_energy = {}
         self.list_face_sensor = []
         self.face_sensor_triangle_dict = {}
+        self.face_sensor_energy = {}
         self.list_light = []
 
         # result
@@ -410,7 +412,7 @@ class Simulator:
 
             print("Wavelength:", current_band["start"], "-", current_band["end"])
             average_wavelength = (current_band["start"] + current_band["end"]) / 2
-            #if average_wavelength != 0: # then use actual wavelength sim
+            # if average_wavelength != 0: # then use actual wavelength sim
             self.applyWavelengthProperties(self.scene, current_band, average_wavelength)
 
             # create integrator
@@ -440,17 +442,19 @@ class Simulator:
             # # read energy of virtual sensor
             if len(self.list_virtual_sensor) > 0:
                 calculate_energy.sensor_add_energy(
-                    virtual_sensor_triangle_dict, integrator, virtual_sensor_energy
+                    self.virtual_sensor_triangle_dict,
+                    integrator,
+                    self.virtual_sensor_energy,
                 )
-                self.N_sim_virtual_sensor.append(virtual_sensor_energy)
+                self.N_sim_virtual_sensor.append(self.virtual_sensor_energy)
 
             # read energy of face sensor
             face_sensor_energy = {}
             if len(self.list_face_sensor) > 0:
                 calculate_energy.sensor_add_energy(
-                    face_sensor_triangle_dict, integrator, face_sensor_energy
+                    self.face_sensor_triangle_dict, integrator, self.face_sensor_energy
                 )
-                self.N_sim_face_sensor.append(face_sensor_energy)
+                self.N_sim_face_sensor.append(self.face_sensor_energy)
 
             self.photonmaps.append(integrator.getPhotonMap())
             self.photonmaps.append(integrator.getPhotonMapSensors())

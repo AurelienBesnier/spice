@@ -32,4 +32,4 @@ def test_photonmaps():
     print("Done!")
 
     assert integrator.getPhotonMap().nPhotons() > 0
-    #assert integrator.getPhotonMapCaustics().nPhotons() > 0
+    # assert integrator.getPhotonMapCaustics().nPhotons() > 0

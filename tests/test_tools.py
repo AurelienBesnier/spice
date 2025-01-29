@@ -1,8 +1,10 @@
 from openalea.spice.common.tools import wavelength2rgb, flatten
 
+
 def test_flatten():
-    l_test = [[1,2,3],[4]]
-    assert flatten(l_test) == [1,2,3,4]
+    l_test = [[1, 2, 3], [4]]
+    assert flatten(l_test) == [1, 2, 3, 4]
+
 
 def test_wavelength2rgb():
     convert = wavelength2rgb(385.0)

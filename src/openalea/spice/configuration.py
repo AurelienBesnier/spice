@@ -76,14 +76,14 @@ class Configuration:
                     elif row[0] == "$SCALE_FACTOR":
                         self.SCALE_FACTOR = float(row[1])
                     elif row[0] == "$RENDERING":
-                        if row[1] == '0':
+                        if row[1] == "0":
                             self.RENDERING = False
-                        if row[1] == '1':
+                        if row[1] == "1":
                             self.RENDERING = True
                     elif row[0] == "$KEEP_ALL":
-                        if row[1] == '0':
+                        if row[1] == "0":
                             self.KEEP_ALL = False
-                        if row[1] == '1':
+                        if row[1] == "1":
                             self.KEEP_ALL = True
                     elif row[0] == "$T_MIN":
                         self.T_MIN = float(row[1])

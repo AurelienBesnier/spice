@@ -1,7 +1,6 @@
 from openalea.spice.simulator import Simulator
 
 if __name__ == "__main__":
-
     simulator = Simulator(config_file="simulation.ini")
     simulator.addVirtualDiskSensorsFromFile("./captors/captors_expe1.csv")
 

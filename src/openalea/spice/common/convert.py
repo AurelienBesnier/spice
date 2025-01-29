@@ -28,7 +28,6 @@ def pgl_to_spice(scene: pgl.Scene):
         refl = sh.appearance.ambient.red / 255.0
         specular = sh.appearance.specular.red / 255.0
 
-
         # using mat Phong
         illum = 1
 

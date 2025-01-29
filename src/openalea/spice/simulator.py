@@ -379,7 +379,7 @@ class Simulator:
 
         for sh in self.scene_pgl:
             refl = materials_r.get(sh.id, 0.9)
-            trans = materials_t.get(sh.id, 0.0)
+            trans = materials_t.get(sh.id, 0.7)
             spec = materials_t.get(sh.id, 0.0)
             self.scene.setMatPrimitive(str(sh.id), refl, trans, spec)
 
@@ -410,8 +410,8 @@ class Simulator:
 
             print("Wavelength:", current_band["start"], "-", current_band["end"])
             average_wavelength = (current_band["start"] + current_band["end"]) / 2
-            if average_wavelength != 0: # then use actual wavelength sim
-                self.applyWavelengthProperties(self.scene, current_band, average_wavelength)
+            #if average_wavelength != 0: # then use actual wavelength sim
+            self.applyWavelengthProperties(self.scene, current_band, average_wavelength)
 
             # create integrator
             self.scene.tnear = self.configuration.T_MIN
@@ -430,27 +430,27 @@ class Simulator:
             sampler = UniformSampler(random.randint(1, sys.maxsize))
 
             # build no kdtree if not rendering
-            integrator.build(self.scene, sampler, self.configuration.RENDERING)
+            integrator.build(self.scene, sampler, self.configuration.KEEP_ALL)
             print("Done!")
 
             # # rendering if declared
-            # if self.configuration.RENDERING:
-            #     self.render(integrator, self.scene, average_wavelength, sampler)
+            if self.configuration.RENDERING:
+                self.render(integrator, self.scene, average_wavelength, sampler)
 
             # # read energy of virtual sensor
-            # if len(self.list_virtual_sensor) > 0:
-            #     calculate_energy.sensor_add_energy(
-            #         virtual_sensor_triangle_dict, integrator, virtual_sensor_energy
-            #     )
-            #     self.N_sim_virtual_sensor.append(virtual_sensor_energy)
+            if len(self.list_virtual_sensor) > 0:
+                calculate_energy.sensor_add_energy(
+                    virtual_sensor_triangle_dict, integrator, virtual_sensor_energy
+                )
+                self.N_sim_virtual_sensor.append(virtual_sensor_energy)
 
-            # # read energy of face sensor
-            # face_sensor_energy = {}
-            # if len(self.list_face_sensor) > 0:
-            #     calculate_energy.sensor_add_energy(
-            #         face_sensor_triangle_dict, integrator, face_sensor_energy
-            #     )
-            #     self.N_sim_face_sensor.append(face_sensor_energy)
+            # read energy of face sensor
+            face_sensor_energy = {}
+            if len(self.list_face_sensor) > 0:
+                calculate_energy.sensor_add_energy(
+                    face_sensor_triangle_dict, integrator, face_sensor_energy
+                )
+                self.N_sim_face_sensor.append(face_sensor_energy)
 
             self.photonmaps.append(integrator.getPhotonMap())
             self.photonmaps.append(integrator.getPhotonMapSensors())
@@ -1038,7 +1038,7 @@ class Simulator:
 
     def setupRender(self, lookfrom=Vec3(0, 0, 0), lookat=Vec3(0, 0, 0), vfov=50.0):
         """
-        Enable the capacity to render/visulize the photon map in the scene
+        Enable the capacity to render an image of the scene.
 
         Parameters
         ----------

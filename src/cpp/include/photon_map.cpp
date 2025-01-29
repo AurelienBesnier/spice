@@ -1,6 +1,7 @@
 #include "photon_map.hpp"
 
-#include <boost/sort/sort.hpp>
+#include <execution>
+#include <algorithm>
 #include <numeric>
 
 template<typename T>
@@ -26,10 +27,17 @@ KdTree<T>::buildNode(int* indices, int n_points, int depth)
         const int axis = depth % 3;
 
         // sort indices by coordination in the separation axis.
-        boost::sort::parallel_stable_sort(
+#ifndef __APPLE__
+        std::sort(std::execution::par_unseq,
           indices, indices + n_points, [&](const int idx1, const int idx2) {
                   return points[idx1][axis] < points[idx2][axis];
           });
+#else
+          std::sort(
+          indices, indices + n_points, [&](const int idx1, const int idx2) {
+                  return points[idx1][axis] < points[idx2][axis];
+          });
+#endif
 
         // index of middle element of indices
         const int mid = (n_points - 1) / 2;
@@ -69,7 +77,7 @@ KdTree<T>::buildNode(int* indices, int n_points, int depth)
 const Photon&
 PhotonMap::getIthPhoton(int i) const
 {
-        return photons[i];
+        return this->photons[i];
 }
 
 void
@@ -81,16 +89,16 @@ PhotonMap::setPhotons(const std::vector<Photon>& p)
 const size_t
 PhotonMap::nPhotons() const
 {
-        return photons.size();
+        return this->photons.size();
 }
 
 void
 PhotonMap::build()
 {
 #ifdef __OUTPUT__
-        std::cout << "[PhotonMap] photons: " << photons.size() << std::endl;
+        std::cout << "[PhotonMap] photons: " << this->photons.size() << std::endl;
 #endif
-        kdtree.setPoints(photons.data(), photons.size());
+        kdtree.setPoints(this->photons.data(), this->photons.size());
         kdtree.buildTree();
 }
 

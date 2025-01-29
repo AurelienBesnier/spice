@@ -2,4 +2,5 @@ Notebook examples
 =================
 
 .. nbgallery::
-    examples/PlantRadScene
+    examples/plantgl-rad-scene/PlantRadScene
+    examples/plantgl-rad-scene/Test_tmin

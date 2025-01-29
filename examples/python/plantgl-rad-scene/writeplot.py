@@ -11,7 +11,7 @@ import re
 width = 0.25  # the width of the bars
 multiplier = 0
 
-fig, ax = plt.subplots(layout='constrained')
+fig, ax = plt.subplots(layout="constrained")
 
 for file in os.listdir("./"):
     if file.startswith("captor_result"):
@@ -37,8 +37,8 @@ for file in os.listdir("./"):
         plt.bar(keys, values)
 
         plt.title("Number of photon on elevation level of captor groups")
-        plt.xlabel('elevation')
-        plt.ylabel('n_photons')
+        plt.xlabel("elevation")
+        plt.ylabel("n_photons")
         plt.savefig("plot" + band + ".png")
 
         plt.close()

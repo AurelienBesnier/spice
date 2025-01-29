@@ -1,4 +1,3 @@
-name: photonmap
 channels:
   - conda-forge
   - openalea3
@@ -19,8 +18,8 @@ dependencies:
   - cmake
   - tbb
   - tbb-devel
-  - boost
   - llvm-openmp
+  - vs2022_win-64 # [win]
   - scipy
   - matplotlib
   - pip
@@ -29,5 +28,8 @@ dependencies:
   - sphinx-copybutton
   - nbsphinx
   - pydata-sphinx-theme
+  - openpyxl
   - myst-parser
   - sphinx-favicon
+  - scikit-build
+  - scikit-build-core

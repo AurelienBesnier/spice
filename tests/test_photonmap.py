@@ -1,4 +1,4 @@
-from openalea.photonmap import PhotonMapping, Scene, UniformSampler, Vec3
+from openalea.spice import PhotonMapping, Scene, UniformSampler, Vec3
 
 
 def test_photonmaps():
@@ -32,4 +32,4 @@ def test_photonmaps():
     print("Done!")
 
     assert integrator.getPhotonMap().nPhotons() > 0
-    #assert integrator.getPhotonMapCaustics().nPhotons() > 0
+    # assert integrator.getPhotonMapCaustics().nPhotons() > 0

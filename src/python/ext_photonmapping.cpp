@@ -6,6 +6,7 @@
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 
@@ -30,9 +31,9 @@ visualizePhotonMap(const PhotonMapping& integrator,
         const PhotonMap& photon_map = integrator.getPhotonMapGlobal();
 
         if (photon_map.nPhotons() > 0)
-#pragma omp parallel for collapse(2) schedule(dynamic, 1)
-                for (unsigned int i = 0; i < height; ++i) {
-                        for (unsigned int j = 0; j < width; ++j) {
+                for (int i = 0; i < height; ++i) {
+#pragma omp parallel for
+                        for (int j = 0; j < width; ++j) {
                                 const float u = (2.0f * j - width) / height;
                                 const float v = (2.0f * i - height) / height;
                                 Ray ray;
@@ -81,7 +82,7 @@ visualizePhotonMap(const PhotonMapping& integrator,
 }
 
 void
-visualizeCaptorsPhotonMap(const Scene& scene,
+visualizeSensorsPhotonMap(const Scene& scene,
                           Image& image,
                           const unsigned& height,
                           const unsigned& width,
@@ -94,11 +95,11 @@ visualizeCaptorsPhotonMap(const Scene& scene,
 {
 
         // visualize photon map
-        const PhotonMap& photon_map = integrator.getPhotonMapCaptors();
+        const PhotonMap& photon_map = integrator.getPhotonMapSensors();
         if (photon_map.nPhotons() > 0)
-#pragma omp parallel for collapse(2) schedule(dynamic, 1)
-                for (unsigned int i = 0; i < height; ++i) {
-                        for (unsigned int j = 0; j < width; ++j) {
+                for (int i = 0; i < height; ++i) {
+#pragma omp parallel for
+                        for (int j = 0; j < width; ++j) {
                                 const float u = (2.0f * j - width) / height;
                                 const float v = (2.0f * i - height) / height;
                                 Ray ray;
@@ -166,12 +167,11 @@ Render(UniformSampler& sampler,
                 std::cout << "\033[A\33[2K\r";
                 std::cout << "rendering scanline " << i + 1 << "/" << height
                           << "..." << std::endl;
-#pragma omp parallel for
-                for (unsigned int j = 0; j < width; ++j) {
+                for (int j = 0; j < width; ++j) {
                         // init sampler
                         sampler = UniformSampler(j + width * i);
-
-                        for (unsigned int k = 0; k < n_samples; ++k) {
+#pragma omp parallel for
+                        for (int k = 0; k < n_samples; ++k) {
                                 const float u =
                                   (2.0f * (j + sampler.getNext1D()) - width) /
                                   height;
@@ -214,7 +214,7 @@ Render(UniformSampler& sampler,
         image.writePPM(filename.data());
 }
 
-PYBIND11_MODULE(libphotonmap_core, m)
+PYBIND11_MODULE(libspice_core, m)
 {
         m.doc() = "pybind11 module for photon mapping";
 
@@ -244,9 +244,11 @@ PYBIND11_MODULE(libphotonmap_core, m)
         py::class_<Photon>(m, "Photon")
           .def(py::init<>())
           .def(py::init<Vec3<float>&, Vec3<float>&, Vec3<float>&, unsigned>())
+          .def(py::init<Vec3<float>&, Vec3<float>&, Vec3<float>&, unsigned, unsigned>())
           .def_readwrite("throughput", &Photon::throughput)
           .def_readwrite("position", &Photon::position)
           .def_readonly("triId", &Photon::triId)
+          .def_readonly("lightId", &Photon::lightId)
           .def_readwrite("wi", &Photon::wi);
 
         py::class_<PhotonMap>(m, "PhotonMap")
@@ -330,9 +332,9 @@ PYBIND11_MODULE(libphotonmap_core, m)
                &PhotonMapping::getPhotonMapCaustics,
                "Returns the caustics photon map",
                py::return_value_policy::reference)
-          .def("getPhotonMapCaptors",
-               &PhotonMapping::getPhotonMapCaptors,
-               "Returns the captor photon map",
+          .def("getPhotonMapSensors",
+               &PhotonMapping::getPhotonMapSensors,
+               "Returns the sensor photon map",
                py::return_value_policy::reference);
 
         // Lights
@@ -348,9 +350,19 @@ PYBIND11_MODULE(libphotonmap_core, m)
           .def("samplePoint", &AreaLight::samplePoint)
           .def("sampleDirection", &AreaLight::sampleDirection);
 
-        // Triangle
-        /*    py::class_<Triangle>(m, "Triangle")
-                    .def(py::init<float*, uint32_t*, float*, uint32_t>());*/
+        // Spot light
+        py::class_<SpotLight>(m, "SpotLight")
+          .def(py::init<Vec3f, Vec3f, Vec3f, float>())
+          .def("Le", &SpotLight::Le)
+          .def("samplePoint", &SpotLight::samplePoint)
+          .def("sampleDirection", &SpotLight::sampleDirection);
+
+        // Spot light
+        py::class_<PointLight>(m, "PointLight")
+          .def(py::init<Vec3f, Vec3f>())
+          .def("Le", &PointLight::Le)
+          .def("samplePoint", &PointLight::samplePoint)
+          .def("sampleDirection", &PointLight::sampleDirection);
 
         py::class_<Primitive>(m, "Primitive")
           .def(py::init<Triangle*,
@@ -483,6 +495,8 @@ PYBIND11_MODULE(libphotonmap_core, m)
           .def(py::init<>())
           .def_readwrite("triangles", &Scene::triangles)
           .def_readwrite("vertices", &Scene::vertices)
+          .def_readwrite("indices", &Scene::indices)
+          .def_readwrite("primitives", &Scene::primitives)
           .def_readwrite("normals", &Scene::normals)
           .def_readwrite("tnear", &Scene::tnear)
           .def(
@@ -491,12 +505,6 @@ PYBIND11_MODULE(libphotonmap_core, m)
             "Function to load a model in the scene, must be an .obj file path",
             py::arg("filepath"))
           .def("setupTriangles", &Scene::setupTriangles)
-          .def("addFaceInfosMat",
-               &Scene::addFaceInfosMat,
-               py::arg("vertices"),
-               py::arg("indices"),
-               py::arg("normals"),
-               py::arg("material"))
           .def("addFaceInfos",
                &Scene::addFaceInfos,
                py::arg("vertices"),
@@ -521,17 +529,18 @@ PYBIND11_MODULE(libphotonmap_core, m)
                py::arg("intensity"),
                py::arg("color"),
                py::arg("mat_name"))
-          .def("addFaceCaptorInfos",
-               &Scene::addFaceCaptorInfos,
+          .def("addFaceSensorInfos",
+               &Scene::addFaceSensorInfos,
                py::arg("vertices"),
                py::arg("indices"),
                py::arg("normals"),
+               py::arg("mat_name"),
                py::arg("reflectance"),
                py::arg("specular"),
                py::arg("transmittance"),
                py::arg("roughness"))
-          .def("addVirtualCaptorInfos",
-               &Scene::addVirtualCaptorInfos,
+          .def("addVirtualSensorInfos",
+               &Scene::addVirtualSensorInfos,
                py::arg("vertices"),
                py::arg("indices"),
                py::arg("normals"))
@@ -547,6 +556,12 @@ PYBIND11_MODULE(libphotonmap_core, m)
                py::arg("color"),
                py::arg("direction"),
                py::arg("angle"))
+          .def("setMatPrimitive",
+               &Scene::setMatPrimitive,
+               py::arg("primName"),
+               py::arg("reflectance"),
+               py::arg("transmittance"),
+               py::arg("specularity") = 0.0)
           .def("build", &Scene::build, py::arg("back_face_culling") = true)
           .def("getTriangles",
                &Scene::getTriangles,
@@ -607,8 +622,8 @@ PYBIND11_MODULE(libphotonmap_core, m)
               py::arg("filename"),
               py::arg("sampler"));
 
-        m.def("visualizeCaptorsPhotonMap",
-              &visualizeCaptorsPhotonMap,
+        m.def("visualizeSensorsPhotonMap",
+              &visualizeSensorsPhotonMap,
               "Function to visualize the photonmap as a .ppm image",
               py::arg("Scene"),
               py::arg("image"),

@@ -1,13 +1,14 @@
+**********
 User guide
-==========
+**********
 
 Input files
------------
+===========
 
 Configuration file
 ------------------
 
-| The file simulation.ini contains all the basic configurations to run a simulation. 
+| The file ``simulation.ini`` contains all the basic configurations to run a simulation.
 |
 | Here are the different variables that you can configure: 
 
@@ -105,7 +106,7 @@ Room file
     2400.0 1840.0 0
     0.0 1840.0 0
 
-| More informations of the files ``.rad`` can be found in this file `refman.pdf <https://github.com/openalea-incubator/photon_mapping/tree/main/docs/refman.pdf>`_
+| More information of the files ``.rad`` can be found in this file `refman.pdf <https://github.com/openalea-incubator/photon_mapping/tree/main/docs/refman.pdf>`_
 
 Optical property files
 ----------------------
@@ -131,7 +132,7 @@ The files containing the optical properties are saved in this structure of folde
 
 
 +---------------------+-----------------------------+
-| Materiau            | Valeur estimee visuellement |
+| Material            | Visually estimated value    |
 +=====================+=============================+
 | Aquanappe           | 0.1                         |
 +---------------------+-----------------------------+
@@ -186,12 +187,12 @@ Plant file
 ----------
 
 | To add a plant to the simulation, we use the Lpy to define the structure of a plant.
-| More informations can be found in this link https://lpy.readthedocs.io/en/latest/index.html
+| More information can be found in this link https://lpy.readthedocs.io/en/latest/index.html
 
 Spectral heterogeneity file 
 ---------------------------
 
-| The spectral heterogeneity file contains the informations of the heterogeneity of the spectrum. In this file, there are the values of energies calculated en umol/m²/s which represent the flow of photons on each wavelength
+| The spectral heterogeneity file contains the information of the heterogeneity of the spectrum. In this file, there are the values of energies calculated en umol/m²/s which represent the flow of photons on each wavelength
 |
 | This is an example of this file
 
@@ -284,16 +285,15 @@ Create a python file (main.py) which contains the core program
 
 .. code-block:: python
 
-    from openalea.photonmap.Simulator import *
+    from openalea.spice.simulator import *
 
     if __name__ == "__main__":
 
-        simulator = Simulator()
-        simulator.readConfiguration("simulation.ini")
+        simulator = Simulator(config_file="simulation.ini")
         simulator.addEnvFromFile("testChamber.rad", "./PO")
         simulator.addVirtualDiskCaptorsFromFile("captors_expe1.csv")
-        res = simulator.run()
-        res.writeResults() #write results to a file
+        simulator.run()
+        simulator.results.writeResults() #write results to a file
 
 Run and results
 ---------------
@@ -304,7 +304,7 @@ Run and results
 
 .. code-block:: bash
 
-    conda activate env_name
+    mamba activate env_name
     python main.py
 
 | The result is a csv file saved in the folder ``./result``. This is an example of result.
@@ -316,9 +316,9 @@ Run and results
 +-----+----------------+----------------+
 
 Calibrate the results
-=====================
+---------------------
 
-| After running the simulation, we will obtain a result with the number of photons received on each captors or organes of plant. But in reality, to using this result to do the further researchs, we have to convert the unit of the current result to a unit which is more physical.
+| After running the simulation, we will obtain a result with the number of photons received on each captors or organs of plant. But in reality, to using this result to do the further researches, we have to convert the unit of the current result to a unit which is more physical.
 |
 | To do that, after finishing the simulation, we will do the calibration the result by using the function ``calibrateResults``.
 
@@ -331,28 +331,27 @@ Calibrate the results
 |
 | In our tool, for each simulation of each spectral range, we will always run the same simulation of photon mapping. So the result final isn't include the factor of spectral heterogeneity. That is why we need the spectral heterogeneity file to correct the final results of simulation before doing the calculations before that.
 |
-| After correcting the factor of heterogeneity, we will calibrate the result by using the calibration point file. This file contains the received energies measured in reality on the positions of some captors which is used in the simulation. With these values, we will use the method ``Linear Regression`` to calculate the coefficients to convertir the results of simulation to irradiance (a unit used to measure the power of energy).
+| After correcting the factor of heterogeneity, we will calibrate the result by using the calibration point file. This file contains the received energies measured in reality on the positions of some captors which is used in the simulation. With these values, we will use the method ``Linear Regression`` to calculate the coefficients to convert the results of simulation to irradiance (a unit used to measure the power of energy).
 |
 | This function is only working with the simulation of captors. 
 
 Visualize the room
-===================
+------------------
 
-To visualize the room, after defining the input files, we use a function named ``visualiserSimulationScene``. Here is the complete code for this program:
+To visualize the room, after defining the input files, we use a function named ``visualizeScene``. Here is the complete code for this program:
 
 .. code-block:: python
 
-    from openalea.photonmap.Simulator import *
+    from openalea.spice.simulator import *
 
     if __name__ == "__main__":
 
-        simulator = Simulator()
-        simulator.readConfiguration("simulation.ini")
+        simulator = Simulator(config_file="simulation.ini")
         simulator.addEnvFromFile("testChamber.rad", "./PO")
         simulator.addVirtualDiskCaptorsFromFile("captors_expe1.csv")
-        simulator.visualiserSimulationScene("ipython")
+        simulator.visualizeScene("ipython")
 
-To obtain the 3D scene, we have to run this program through ```ipython```.
+To obtain the 3D scene, we have to run this program through ``ipython`` or if in a notebook we use ``oawidgets``.
 
 .. code-block:: bash
 
@@ -366,8 +365,18 @@ To obtain the 3D scene, we have to run this program through ```ipython```.
   :width: 700
   :alt: Result of function test tmin
 
+
+It is also possible to visualize the simulation's results in different ways with two other functions:
+
+* ``visualizeResults`` which will apply a color map on each sensor object depending on the number of photons on it. By default the colormap used is 'jet'.
+* ``visualizePhotons`` which will display all the photons in the photon map in a 3d scene.
+
+.. warning::
+    The function ``visualizePhotons`` will create each individual photons in the scene. This can be very intensive. 
+    Use with caution.
+
 Test value Tmin
-================
+---------------
 
 | While running the simulation, we risk encountering the problem of auto-intersection if the value of ``Tmin`` is too small.
 | To avoid this problem, we've created a function to run the simulation with different values of ``Tmin``. The result of this function is a graph showing the change in the number of photons after testing different values of ``Tmin``.
@@ -376,12 +385,11 @@ Test value Tmin
 
 .. code-block:: python
 
-    from openalea.photonmap.Simulator import *
+    from openalea.spice.simulator import *
 
     if __name__ == "__main__":
 
-        simulator = Simulator()
-        simulator.readConfiguration("simulation.ini")
+        simulator = Simulator(config_file="simulation.ini")
         simulator.addEnvFromFile("testChamber.rad", "./PO")
         simulator.addVirtualDiskCaptorsFromFile("captors_expe1.csv")        
         simulator.test_t_min(int(1e6), 1e-6, 10, True)

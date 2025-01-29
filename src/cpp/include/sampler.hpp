@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <algorithm>
 #include <stdlib.h>
 
 #include "core.hpp"
@@ -87,8 +88,8 @@ class RNG
         {
                 state.state = seed;
                 seedRand = seed;
-                seed1 = rand_r(&seedRand);
-                seed2 = rand_r(&seedRand);
+                seed1 = rand();
+                seed2 = rand();
         }
 
         float getNext()

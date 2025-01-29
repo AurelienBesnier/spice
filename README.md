@@ -1,15 +1,20 @@
-[![doc](https://github.com/AurelienBesnier/photon_mapping/actions/workflows/build-docs-upload.yml/badge.svg)](https://minhlucky9.github.io/photon_mapping/build/html/index.html)
-![package](https://github.com/AurelienBesnier/photon_mapping/actions/workflows/python-package-conda.yml/badge.svg)
+![package](https://github.com/openalea-incubator/spice/actions/workflows/conda-build.yml/badge.svg)
 
-# photon_mapping
+# openalea.spice
 
 minimal but extensible header only implementation of photon mapping in C++.
 
 # How to compile:
-Enter main directory, 
+*Install Miniforge*: https://github.com/conda-forge/miniforge
+
+Follow installation instructions. Use default installation settings.
+
+Execute next commands in anaconda prompt.
+
+### Creating an environment
 create and activate the conda environment:
 ```bash
-mamba env create -f ./conda/environment.yml
+mamba env create -f environment.yml -n photonmap
 mamba activate photonmap
 ```
 To install as a Python library:
@@ -24,40 +29,15 @@ cmake -DCMAKE_BUILD_TYPE=Debug ../
 make -j
 ```
 
-# How to run example:
-
-```bash
-mamba activate photonmap
-cd examples/python/plantgl-rad-scene
-python planglRadScene.py
-```
-
-* The result of the simulation is in the folder: [./results/](https://github.com/minhlucky9/photon_mapping/tree/main/examples/python/plantgl-rad-scene/results)
-* Tools to evalutate result: [.examples/python/Evaluation Simulation SEC2/](https://github.com/minhlucky9/photon_mapping/tree/main/examples/python/Evaluation%20Simulation%20SEC2)
-
-
-![](img/cornellbox-water_pm.png)
-
-# How to run the jupyter notebook
-
-```bash
-mamba activate photonmap
-cd examples/python/plantgl-rad-scene
-jupyter notebook
-```
-## Features
-
-* Direct illumination with explicit light sampling
-* Indirect illumination with final gathering
-* Caustics photon map
-* Load obj model
+### Examples
+A set of examples can be found in the [`./examples/python`](./examples/python) directory.
 
 ## Requirements
 
 * C++ (20>=)
 * CMake (3.20>=)
 * OpenMP
-* [Embree](https://github.com/embree/embree) (>=3)
+* [Embree](https://github.com/embree/embree) (>=4)
 
 ## Externals
 
@@ -65,7 +45,7 @@ jupyter notebook
 * [tinyobjloader](https://github.com/tinyobjloader/tinyobjloader)
 
 ## Authors
-This project was originaly developed by [YumcyaWiz](https://github.com/yumcyaWiz/) (Kenta Eto). Main extension were developed by Aurélien Besnier and Nguyen Tuan Minh with contribution of J. Bertheloot, F. Boudon, T. Arsouze, E. Faure.
+This project was originally developed by [YumcyaWiz](https://github.com/yumcyaWiz/) (Kenta Eto). Main extension were developed by Aurélien Besnier and Nguyen Tuan Minh with contribution of J. Bertheloot, F. Boudon, T. Arsouze, E. Faure.
 This work was funded by INRAe Metaprogramme DIGIT-BIO (Digital biology to explore and predict living organisms in their environment). 
 
 ## Use case 

@@ -79,7 +79,7 @@ class PhotonMapping : public Integrator
 
         PhotonMap globalPhotonMap;
         PhotonMap causticsPhotonMap;
-        PhotonMap captorPhotonMap;
+        PhotonMap sensorPhotonMap;
 
         // compute reflected radiance with global photon map
         Vec3f computeRadianceWithPhotonMap(const Vec3f& wo,
@@ -501,11 +501,11 @@ class PhotonMapping : public Integrator
         const PhotonMap& getPhotonMapGlobal() const { return globalPhotonMap; }
 
         /**
-         * @fn const PhotonMap &getPhotonMapCaptors() const
-         * @brief Get the captor photon map
-         * @return The reference of the captor photonmap
+         * @fn const PhotonMap &getPhotonMapSensors() const
+         * @brief Get the sensor photon map
+         * @return The reference of the sensor photonmap
          */
-        const PhotonMap& getPhotonMapCaptors() const { return captorPhotonMap; }
+        const PhotonMap& getPhotonMapSensors() const { return sensorPhotonMap; }
 
         /**
          * @fn bool hasCaustics() const
@@ -538,25 +538,16 @@ class PhotonMapping : public Integrator
                 if (scene.nLights() <= 0)
                         return;
                 std::vector<Photon> photons;
-                std::vector<Photon> captorPhotons;
-                int maxThreads = omp_get_max_threads();
-                if (nbThreads < maxThreads) {
-                        omp_set_num_threads(nbThreads);
-                        std::cout << "Current number of threads is "
-                                  << nbThreads << std::endl;
-                } else {
-                        std::cout << "Maximum number of threads is "
-                                  << maxThreads << std::endl;
-                }
+                std::vector<Photon> sensorPhotons;
+                omp_set_num_threads(nbThreads);
 
                 // init sampler for each thread
-                std::vector<std::unique_ptr<Sampler>> samplers(
-                  omp_get_max_threads());
+                std::vector<std::unique_ptr<Sampler>> samplers(nbThreads);
                 for (int i = 0; i < samplers.size(); ++i) {
                         samplers[i] = sampler.clone();
                         samplers[i]->setSeed(sampler.getSeed() * (i + 1));
                 }
-                int maxDepthPosible = 0;
+                int maxDepthPossible = 0;
 // build global photon map
 // photon tracing
 #ifdef __OUTPUT__
@@ -576,8 +567,7 @@ class PhotonMapping : public Integrator
                                   << "/" << scene.lights.size() << "..."
                                   << std::endl;
 
-#pragma omp parallel for
-                        for (unsigned int i = 0;
+                        for (int i = 0;
                              i < nPhotonsGlobal / scene.lights.size();
                              ++i) {
                                 Sampler& sampler_per_thread =
@@ -596,27 +586,25 @@ class PhotonMapping : public Integrator
                                 // TODO: debug nan value
                                 int d = 0;
                                 for (int k = 0; k < maxDepth; ++k, d++) {
+#ifdef __OUTPUT__
                                         if (std::isnan(throughput[0]) ||
                                             std::isnan(throughput[1]) ||
                                             std::isnan(throughput[2])) {
-#ifdef __OUTPUT__
                                                 std::cerr
                                                   << "[PhotonMapping] photon "
                                                      "throughput is NaN"
                                                   << std::endl;
-#endif
                                                 break;
                                         } else if (throughput[0] < 0 ||
                                                    throughput[1] < 0 ||
                                                    throughput[2] < 0) {
-#ifdef __OUTPUT__
                                                 std::cerr
                                                   << "[PhotonMapping] photon "
                                                      "throughput is minus"
                                                   << std::endl;
-#endif
                                                 break;
                                         }
+#endif
 
                                         IntersectInfo info;
                                         if (scene.intersect(ray, info)) {
@@ -624,24 +612,23 @@ class PhotonMapping : public Integrator
                                                   info.hitPrimitive
                                                     ->getBxDFType();
 
-                                                bool is_captor =
+                                                bool is_sensor =
                                                   (bxdf_type ==
-                                                   BxDFType::CAPTOR);
-                                                bool is_phong_captor =
+                                                   BxDFType::SENSOR);
+                                                bool is_phong_sensor =
                                                   (bxdf_type ==
-                                                   BxDFType::PHONGCAPTOR);
+                                                   BxDFType::PHONGSENSOR);
 
-                                                if (is_captor ||
-                                                    is_phong_captor) {
+                                                if (is_sensor ||
+                                                    is_phong_sensor) {
                                                         // check if rayon
-                                                        // contact captor from
+                                                        // contact sensor from
                                                         // above
                                                         float test_ouverture =
                                                           -dot(info.surfaceInfo
                                                                  .shadingNormal,
                                                                ray.direction);
                                                         if (test_ouverture > -1)
-#pragma omp critical
                                                         {
                                                                 Photon p(
                                                                   throughput,
@@ -654,9 +641,10 @@ class PhotonMapping : public Integrator
                                                                     .hitPrimitive
                                                                     ->triangle
                                                                       [0]
-                                                                    .faceID);
+                                                                    .faceID,
+                                                                    l);
 
-                                                                captorPhotons
+                                                                sensorPhotons
                                                                   .emplace_back(
                                                                     p);
                                                         }
@@ -664,7 +652,6 @@ class PhotonMapping : public Integrator
                                                              BxDFType::
                                                                DIFFUSE &&
                                                            forRendering)
-#pragma omp critical
                                                 {
                                                         // TODO: remove lock to
                                                         // get more speed
@@ -675,11 +662,12 @@ class PhotonMapping : public Integrator
                                                           -ray.direction,
                                                           info.hitPrimitive
                                                             ->triangle[0]
-                                                            .faceID);
+                                                            .faceID,
+                                                            l);
                                                         photons.emplace_back(p);
                                                 }
 
-                                                if (is_captor) {
+                                                if (is_sensor) {
                                                         k--;
                                                         ray =
                                                           Ray(info.surfaceInfo
@@ -717,13 +705,13 @@ class PhotonMapping : public Integrator
                                         }
                                 }
 
-                                if (d > maxDepthPosible) {
-                                        maxDepthPosible = d;
+                                if (d > maxDepthPossible) {
+                                        maxDepthPossible = d;
                                 }
                         }
                 }
 
-                std::cout << "Max depth possible: " << maxDepthPosible
+                std::cout << "Max depth possible: " << maxDepthPossible
                           << std::endl;
 // build photon map
 #ifdef __OUTPUT__
@@ -739,18 +727,18 @@ class PhotonMapping : public Integrator
                           << globalPhotonMap.nPhotons() << std::endl;
                 }
 
-                if (!captorPhotons.empty()) {
+                if (!sensorPhotons.empty()) {
 #ifdef __OUTPUT__
-                        std::cout << "building captor photonmap..."
+                        std::cout << "building sensor photonmap..."
                                   << std::endl;
 #endif
-                        captorPhotonMap.setPhotons(captorPhotons);
+                        sensorPhotonMap.setPhotons(sensorPhotons);
                         if (forRendering)
-                                captorPhotonMap.build();
+                                sensorPhotonMap.build();
 
 #ifdef __OUTPUT__
-                        std::cout << "Number of photons on captor elements: "
-                                  << captorPhotonMap.nPhotons() << std::endl;
+                        std::cout << "Number of photons on sensor elements: "
+                                  << sensorPhotonMap.nPhotons() << std::endl;
                         std::cout << "Done!" << std::endl;
 #endif
                 }

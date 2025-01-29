@@ -13,6 +13,7 @@ class Configuration:
     NB_THREAD: int = 4
     BASE_SPECTRAL_RANGE: tuple = (400, 800)
     BACKFACE_CULLING: bool = True
+    KEEP_ALL: bool = False
     RENDERING: bool = False
     OPTICAL_PROPERTIES_DIR: Path = ""
     ENVIRONMENT_FILE: Path = ""
@@ -28,6 +29,7 @@ class Configuration:
         base_spectral_range=(400, 800),
         divided_spectral_range=None,
         rendering=False,
+        keep_all=False,
         optical_properties_dir="",
         environment_file="",
     ):
@@ -39,6 +41,7 @@ class Configuration:
         self.BACKFACE_CULLING = backface_culling
         self.BASE_SPECTRAL_RANGE = base_spectral_range
         self.RENDERING = rendering
+        self.KEEP_ALL = keep_all
         if divided_spectral_range is None:
             divided_spectral_range = [{"start": 0, "end": 0}]
         self.DIVIDED_SPECTRAL_RANGE = divided_spectral_range
@@ -72,6 +75,16 @@ class Configuration:
                         self.ENVIRONMENT_FILE = Path(row[1])
                     elif row[0] == "$SCALE_FACTOR":
                         self.SCALE_FACTOR = float(row[1])
+                    elif row[0] == "$RENDERING":
+                        if row[1] == '0':
+                            self.RENDERING = False
+                        if row[1] == '1':
+                            self.RENDERING = True
+                    elif row[0] == "$KEEP_ALL":
+                        if row[1] == '0':
+                            self.KEEP_ALL = False
+                        if row[1] == '1':
+                            self.KEEP_ALL = True
                     elif row[0] == "$T_MIN":
                         self.T_MIN = float(row[1])
                     elif row[0] == "$NB_THREAD":

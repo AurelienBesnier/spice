@@ -4,9 +4,11 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
+from collections import Counter
 
 import matplotlib
 import matplotlib.pyplot as plt
+
 from openalea.lpy import Lsystem
 from openalea.spice.libspice_core import (
     Render,
@@ -449,7 +451,6 @@ class Simulator:
                 self.N_sim_virtual_sensor.append(self.virtual_sensor_energy)
 
             # read energy of face sensor
-            face_sensor_energy = {}
             if len(self.list_face_sensor) > 0:
                 calculate_energy.sensor_add_energy(
                     self.face_sensor_triangle_dict, integrator, self.face_sensor_energy
@@ -647,6 +648,22 @@ class Simulator:
         else:
             Viewer.display(self.scene_pgl)
 
+
+    def get_photons_per_triangles(self):
+        """
+        Returns a counter object with the number of photon per triangle
+        Returns
+        -------
+            a Counter object.
+        """
+        photons_triangles = Counter()
+        for phmap in self.photonmaps:
+            for i in range(phmap.nPhotons()):
+                triangle_id = phmap.getIthPhoton(i).triId
+                photons_triangles[triangle_id] += 1
+
+        return photons_triangles
+
     def visualizePhotons(self, mode="ipython"):
         """
         Visualize the scene of simulation with the tools of OpenAlea
@@ -710,7 +727,7 @@ class Simulator:
                 shader="dot",
                 attribute=lights,
                 color_map=matplotlib_color_maps.Rainbow,
-                color_range=[0, max(light_range, default=0) + n_light],
+                color_range=[0, n_light],
             )
 
             plot = PlantGL(self.scene_pgl, group_by_color=False)

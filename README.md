@@ -26,7 +26,7 @@ python -m pip install ./
 
 To compile the source code without installing (useful for debugging):
 ```bash
-mkdir ./build && cd ./build
+[ -d ./build ] || mkdir ./build; cd ./build
 cmake -DCMAKE_BUILD_TYPE=Debug ../
 make -j
 ```

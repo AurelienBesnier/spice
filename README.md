@@ -1,4 +1,6 @@
-![package](https://github.com/openalea-incubator/spice/actions/workflows/conda-build.yml/badge.svg)
+[![Build Status](https://github.com/openalea-incubator/spice/actions/workflows/conda-build.yml/badge.svg?branch=main)](https://github.com/openalea-incubator/spice/actions/workflows/conda-package-build.yml?query=branch%3Amaster)
+[![Python Version](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # openalea.spice
 

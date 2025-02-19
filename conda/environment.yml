@@ -9,7 +9,7 @@ dependencies:
   - openalea.lpy
   - openalea.plantgl
   - oawidgets
-  - pybind11
+  - nanobind
   - pytest
   - embree
   - pandas

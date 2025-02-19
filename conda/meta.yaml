@@ -13,7 +13,7 @@ requirements:
   host:
     - python x.x
     - numpy x.x
-    - pybind11-abi
+    - nanobind-abi
     - scikit-build-core
     - scipy
 
@@ -27,7 +27,7 @@ requirements:
     - cmake
     - vs2022_win-64 # [win]
     - ninja
-    - pybind11
+    - nanobind
     - embree
     - llvm-openmp
     - tbb

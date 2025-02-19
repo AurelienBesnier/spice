@@ -273,7 +273,7 @@ def addVirtualSensors(scene, virtual_sensor_triangle_dict, list_virtual_sensor):
 
     Parameters
     ----------
-    scene : libspice_core.Scene
+    scene : spice.Scene
         The photon mapping scene used to run the simulation
     virtual_sensor_triangle_dict : dict
         The dictionary of the triangles of sensors
@@ -309,7 +309,7 @@ def addFaceSensors(scene, face_sensor_triangle_dict, list_face_sensor):
 
     Parameters
     ----------
-    scene : libspice_core.Scene
+    scene : spice.Scene
         The photon mapping scene used to run the simulation
     face_sensor_triangle_dict : dict
         The dictionary of the triangles of sensors

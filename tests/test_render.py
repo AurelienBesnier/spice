@@ -62,7 +62,7 @@ def test_intersection():
         camera,
         integrator,
         scene,
-        "output.ppm",
+        str("output.ppm"),
     )
 
     image.writePPM("output.ppm")

@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <vector>
+#include <cassert>
 
 #include "../../../externals/tinyobjloader/tiny_obj_loader.h"
 #include "core.hpp"

@@ -26,7 +26,7 @@ def addEnvironment(
 
     Parameters
     ----------
-    scene : libspice_core.Scene
+    scene : spice.Scene
         The photon mapping scene used to run the simulation
     sh : Shape
         The plantGL Shape to add

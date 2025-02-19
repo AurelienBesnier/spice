@@ -45,8 +45,8 @@ add_subdirectory("externals")
 add_subdirectory("src/cpp/include")
 
 # pm(photon_mapping)
-add_library(pm INTERFACE src/python/ext_photonmapping.cpp)
-target_include_directories(pm INTERFACE "src/cpp/include")
+add_library(pm INTERFACE src/python/ext_photonmapping_nano.cpp)
+# target_include_directories(pm INTERFACE "src/cpp/include")
 
 set_target_properties(pm
         PROPERTIES
@@ -75,7 +75,12 @@ endif()
 # building lib
 find_package(Python COMPONENTS Interpreter Development REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
+# Detect the installed nanobind package and import it into CMake
+execute_process(
+    COMMAND "${Python_EXECUTABLE}" -m nanobind --cmake_dir
+    OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE nanobind_ROOT)
+find_package(nanobind CONFIG REQUIRED)
 
-install(TARGETS spice_core
+install(TARGETS spice
         COMPONENT python
         LIBRARY DESTINATION "${CMAKE_SOURCE_DIR}/src/openalea/spice/")

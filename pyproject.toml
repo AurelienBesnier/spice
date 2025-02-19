@@ -28,7 +28,7 @@ classifiers = [
   "Topic :: Scientific/Engineering",
 ]
 license = {file = "LICENSE"}
-version="0.1.0"
+version = "0.1.0"
 
 [project.urls]
 Homepage = "https://github.com/openalea-incubator/photon_mapping"

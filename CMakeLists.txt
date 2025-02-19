@@ -74,7 +74,7 @@ endif()
 
 # building lib
 find_package(Python COMPONENTS Interpreter Development REQUIRED)
-find_package(pybind11 CONFIG REQUIRED)
+# find_package(pybind11 CONFIG REQUIRED)
 # Detect the installed nanobind package and import it into CMake
 execute_process(
     COMMAND "${Python_EXECUTABLE}" -m nanobind --cmake_dir

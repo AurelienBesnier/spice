@@ -44,7 +44,7 @@ test = [
 
 [tool.scikit-build]
 build-dir="./build"
-sdist.include = ["libspice_core.so"]
+sdist.include = ["spice*"]
 logging.level = "INFO"
 build.verbose = true
 

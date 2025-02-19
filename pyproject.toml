@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core"]
+requires = ["scikit-build-core", "nanobind"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -29,6 +29,12 @@ classifiers = [
 ]
 license = {file = "LICENSE"}
 version = "0.1.0"
+dependencies = [
+  "pandas",
+  "scipy",
+  "matplotlib",
+  "openpyxl",
+]
 
 [project.urls]
 Homepage = "https://github.com/openalea-incubator/photon_mapping"
@@ -37,9 +43,22 @@ Discussions = "https://github.com/openalea-incubator/photon_mapping/discussions"
 Changelog = "https://github.com/openalea-incubator/photon_mapping/releases"
 
 [project.optional-dependencies]
+doc = [
+  "sphinx",
+  "sphinx-autoapi",
+  "sphinx-copybutton",
+  "nbsphinx",
+  "pydata-sphinx-theme",
+  "myst-parser",
+  "sphinx-favicon"
+]
+notebook = [
+  "jupyter",
+  "ipywidgets"
+]
 test = [
-  "pytest >=6",
-  "pytest-cov >=3",
+  "pytest",
+  "pytest-cov",
 ]
 
 [tool.scikit-build]

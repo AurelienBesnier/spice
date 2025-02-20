@@ -1,5 +1,3 @@
-
-
 find_package(Python COMPONENTS Interpreter Development REQUIRED)
 
 if (APPLE)
@@ -16,6 +14,6 @@ else()
         OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE nanobind_ROOT)
     find_package(nanobind CONFIG REQUIRED)
 
-    nanobind_add_module(libspice ext_photonmapping_nano.cpp)
+    nanobind_add_module(libspice LTO ext_photonmapping_nano.cpp)
     target_link_libraries(libspice PUBLIC tinyobjloader embree OpenMP::OpenMP_CXX pm)
 endif()

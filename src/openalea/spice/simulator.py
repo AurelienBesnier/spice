@@ -10,28 +10,19 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 from openalea.lpy import Lsystem
-from openalea.spice.spice import (
+from openalea.spice.libspice import (
     Render,
     visualizeSensorsPhotonMap,
     visualizePhotonMap,
-)
-from openalea.plantgl.all import (
-    Scene,
-    Material,
-    Color3,
-    Viewer,
-    Translated,
-    Tesselator,
-    Shape,
-    Sphere,
-)
-
-from openalea.spice import (
     PhotonMapping,
     UniformSampler,
     Vec3,
-    spice,
+    Scene,
+    Image,
+    Camera,
 )
+import openalea.plantgl.all as pgl
+
 from openalea.spice.energy import calculate_energy, correct_energy
 from openalea.spice.loader import load_sensor, load_environment
 from openalea.spice.loader.load_sensor import Sensor
@@ -175,8 +166,8 @@ class Simulator:
             self.configuration.read_file(Path(config_file))
         self.n_samples = 512
         #
-        self.scene_pgl = Scene()
-        self.scene = spice.Scene()
+        self.scene_pgl = pgl.Scene()
+        self.scene = Scene()
         self.list_virtual_sensor = []
         self.virtual_sensor_triangle_dict = {}
         self.virtual_sensor_energy = {}
@@ -344,7 +335,7 @@ class Simulator:
 
         """
         sensor = Sensor(
-            Shape(),
+            pgl.Shape(),
             "VirtualSensor",
             (
                 pos[0] / self.configuration.SCALE_FACTOR,
@@ -583,8 +574,8 @@ class Simulator:
             for sh in self.scene_pgl:
                 if sh.id in self.N_sim_face_sensor[wavelength_index].keys():
                     color = cmap(norm(self.N_sim_face_sensor[wavelength_index][sh.id]))
-                    sh.appearance = Material(
-                        Color3(
+                    sh.appearance = pgl.Material(
+                        pgl.Color3(
                             denormalize(color[0]),
                             denormalize(color[1]),
                             denormalize(color[2]),
@@ -613,8 +604,8 @@ class Simulator:
                                 ]
                             )
                         )
-                        sh.appearance = Material(
-                            Color3(
+                        sh.appearance = pgl.Material(
+                            pgl.Color3(
                                 denormalize(color[0]),
                                 denormalize(color[1]),
                                 denormalize(color[2]),
@@ -622,7 +613,7 @@ class Simulator:
                         )
 
         if mode == "ipython":
-            Viewer.display(self.scene_pgl)
+            pgl.Viewer.display(self.scene_pgl)
         elif mode == "oawidgets":
             from oawidgets.plantgl import PlantGL
             import k3d
@@ -646,7 +637,7 @@ class Simulator:
 
             return plot
         else:
-            Viewer.display(self.scene_pgl)
+            pgl.Viewer.display(self.scene_pgl)
 
 
     def get_photons_per_triangles(self):
@@ -684,7 +675,8 @@ class Simulator:
         """
         photons = []
 
-        r = lambda: random.randint(0, 255)
+        def r():
+            return random.randint(0, 255)
 
         # creating color per light source
         colors = []
@@ -702,16 +694,16 @@ class Simulator:
                 photons.append(((photon[0], photon[1], photon[2]), light_id))
 
         if mode == "ipython":
-            ph_sc = Scene()
+            ph_sc = pgl.Scene()
             for photon in photons:
-                sp = Sphere(0.1 * self.configuration.SCALE_FACTOR, 4)
+                sp = pgl.Sphere(0.1 * self.configuration.SCALE_FACTOR, 4)
                 position = photon[0]
                 color = colors[photon[1]]
-                s2 = Translated(position[0], position[1], position[2], sp)
-                sh = Shape(s2, Material(Color3(color[0], color[1], color[2])))
+                s2 = pgl.Translated(position[0], position[1], position[2], sp)
+                sh = pgl.Shape(s2, pgl.Material(pgl.Color3(color[0], color[1], color[2])))
                 ph_sc.add(sh)
             ph_sc.merge(self.scene_pgl)
-            Viewer.display(ph_sc)
+            pgl.Viewer.display(ph_sc)
 
         elif mode == "oawidgets":
             from oawidgets.plantgl import PlantGL
@@ -749,7 +741,7 @@ class Simulator:
             plot.camera_reset()
             return plot
         else:
-            Viewer.display(self.scene_pgl)
+            pgl.Viewer.display(self.scene_pgl)
 
     def visualizeScene(self, mode="ipython"):
         """
@@ -783,7 +775,7 @@ class Simulator:
             )
 
         if mode == "ipython":
-            Viewer.display(self.scene_pgl)
+            pgl.Viewer.display(self.scene_pgl)
 
         elif mode == "oawidgets":
             from oawidgets.plantgl import PlantGL
@@ -793,7 +785,7 @@ class Simulator:
             return plot
 
         else:
-            Viewer.display(self.scene_pgl)
+            pgl.Viewer.display(self.scene_pgl)
 
     def test_t_min(self, nb_photons, start_t, loop, is_only_lamp=False):
         """
@@ -824,7 +816,7 @@ class Simulator:
         if loop < 1:
             return
 
-        self.scene = spice.Scene()
+        self.scene = Scene()
         n_estimation_global = 100
         final_gathering_depth = 0
         current_band = self.configuration.DIVIDED_SPECTRAL_RANGE[0]
@@ -992,7 +984,7 @@ class Simulator:
             print("Enable rendering first !!!")
             return
 
-        image = spice.Image(self.image_width, self.image_height)
+        image = Image(self.image_width, self.image_height)
         print("Printing photonmap image...")
         visualizePhotonMap(
             integrator,
@@ -1046,7 +1038,6 @@ class Simulator:
 
         Parameters
         ----------
-            room
         flip_normal: bool
             Determine the direction of the vector normal of triangle.
         """
@@ -1081,7 +1072,7 @@ class Simulator:
         Parameters
         ----------
         sensor_file: str
-            The link to the file which contains the informations of the sensors
+            The link to the file which contains the information of the sensors
             in the simulation
 
         """
@@ -1133,10 +1124,10 @@ class Simulator:
         scale_factor = self.configuration.SCALE_FACTOR / 10
         position = (plant_pos[0] / 10, plant_pos[1] / 10, plant_pos[2] / 10)
 
-        tr = Tesselator()
+        tr = pgl.Tesselator()
         for sh in lscene:
             sh.apply(tr)
-            mesh = Shape(tr.result, sh.appearance, sh.id)
+            mesh = pgl.Shape(tr.result, sh.appearance, sh.id)
             self.addFaceSensorToScene(mesh, position, scale_factor)
 
     def initCameraRender(self, lookfrom=Vec3(0, 0, 0), lookat=Vec3(0, 0, 0), vfov=50.0):
@@ -1163,7 +1154,7 @@ class Simulator:
         aperture = 0.01
 
         # coordinates must be in meters
-        camera = spice.Camera(
+        camera = Camera(
             lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus
         )
 

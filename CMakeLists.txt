@@ -81,6 +81,6 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE nanobind_ROOT)
 find_package(nanobind CONFIG REQUIRED)
 
-install(TARGETS spice
+install(TARGETS libspice
         COMPONENT python
         LIBRARY DESTINATION "${CMAKE_SOURCE_DIR}/src/openalea/spice/")

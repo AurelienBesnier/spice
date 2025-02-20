@@ -15,6 +15,7 @@ requirements:
     - numpy x.x
     - nanobind-abi
     - nanobind
+    - pybind11-abi # [unix]
     - scikit-build-core
     - scipy
 
@@ -29,6 +30,7 @@ requirements:
     - vs2022_win-64 # [win]
     - ninja
     - nanobind
+    - pybind11 # [unix]
     - embree
     - llvm-openmp
     - tbb

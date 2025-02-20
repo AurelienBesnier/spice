@@ -43,6 +43,7 @@ Discussions = "https://github.com/openalea-incubator/photon_mapping/discussions"
 Changelog = "https://github.com/openalea-incubator/photon_mapping/releases"
 
 [project.optional-dependencies]
+pybind=["pybind11"]
 doc = [
   "sphinx",
   "sphinx-autoapi",
@@ -62,8 +63,8 @@ test = [
 ]
 
 [tool.scikit-build]
-build-dir="./build"
-sdist.include = ["spice*"]
+build-dir="./build/{wheel_tag}"
+sdist.include = ["*spice*"]
 logging.level = "INFO"
 build.verbose = true
 

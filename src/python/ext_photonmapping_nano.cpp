@@ -217,7 +217,7 @@ Render(UniformSampler& sampler,
 }
 
 
-NB_MODULE(spice, m)
+NB_MODULE(libspice, m)
 {
         m.doc() = "nanobind module for photon mapping";
 

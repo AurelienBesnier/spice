@@ -1,5 +1,5 @@
 {% set pyproject = load_file_data('pyproject.toml') %}
-{% set version = pyproject.get('version') %}
+{% set version = pyproject.get('project', {}).get('version') %}
 package:
   name: openalea.spice
   version: {{ version }}

@@ -35,8 +35,8 @@ if(APPLE)
     endif()
 endif()
 
-if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CXXFLAGS} /std:c++latest /EHsc")
+if(WIN32)
+    set(CMAKE_CXX_COMPILER g++)
 endif()
 
 # externals

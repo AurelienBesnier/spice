@@ -41,6 +41,7 @@ requirements:
     - make
     - cmake
     - gcc   # [win]
+    - libstdcxx   # [win]
     - ninja
     - nanobind
     - pybind11 # [unix]

@@ -9,7 +9,6 @@ option(BUILD_CXX_EXAMPLE "build c++ example" OFF)
 if(WIN32)
     set(CMAKE_CXX_COMPILER g++)
     set(cxx_compiler g++)
-    set(CMAKE_CXX_FLAGS "${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY")
 endif()
 
 find_package(TBB CONFIG REQUIRED)
@@ -31,7 +30,7 @@ endif()
 
 # OpenMP
 if(APPLE)
-    set(CMAKE_CXX_COMPILER g++)
+    set(CMAKE_CXX_COMPILER clang++)
     set(CMAKE_CXX_FLAGS "${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY")
 
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang\$")
@@ -58,7 +57,7 @@ set_target_properties(pm
         )
 
 
-target_link_libraries(pm INTERFACE OpenMP::OpenMP_CXX tinyobjloader embree)
+target_link_libraries(pm INTERFACE OpenMP::OpenMP_CXX tinyobjloader embree Threads::Threads)
 target_link_libraries(pm INTERFACE photon_map primitive triangle image)
 
 # examples

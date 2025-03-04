@@ -10,6 +10,15 @@ source:
 build:
   number: 0
   preserve_egg_dir: True
+  script_env:
+    - CMAKE_GEN=MinGW Makefiles # [win]
+    - CMAKE_GENERATOR=MinGW Makefiles # [win]
+    - CXX=g++ # [win]
+    - CC=gcc # [win]
+    - cxx_compiler=g++ # [win]
+    - c_compiler=gcc # [win]
+  script:
+    - {{PYTHON}} -m pip install . -vv
 
 requirements:
   host:
@@ -30,6 +39,7 @@ requirements:
     - make
     - cmake
     - vs2022_win-64 # [win]
+    - m2w64-toolchain   # [win]
     - ninja
     - nanobind
     - pybind11 # [unix]

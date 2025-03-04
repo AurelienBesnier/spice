@@ -40,7 +40,7 @@ requirements:
     - scipy
     - make
     - cmake
-    - m2w64-toolchain   # [win]
+    - gcc   # [win]
     - ninja
     - nanobind
     - pybind11 # [unix]

@@ -9,6 +9,7 @@ option(BUILD_CXX_EXAMPLE "build c++ example" OFF)
 if(WIN32)
     set(CMAKE_CXX_COMPILER g++)
     set(cxx_compiler g++)
+    set(CMAKE_CXX_FLAGS "${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY")
 endif()
 
 find_package(TBB CONFIG REQUIRED)

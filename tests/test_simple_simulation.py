@@ -7,8 +7,8 @@ def test_simple_simulation():
     simulator = Simulator()
 
     # setup configuration
-    simulator.nb_photons = 1000000
-    simulator.max_depth = 5
+    simulator.configuration.nb_photons = 1000000
+    simulator.configuration.max_depth = 5
     simulator.resetScene()
 
     # setup environment

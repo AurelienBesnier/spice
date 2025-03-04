@@ -71,7 +71,7 @@ build.verbose = true
 [tool.scikit-build.cmake]
 build-type="Release"
 source-dir="."
-args=['-Dcxx_compiler=g++']
+args=['-DCMAKE_CXX_COMPILER=g++']
 
 [tool.scikit-build.wheel]
 packages = ["src/openalea"]

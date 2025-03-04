@@ -30,7 +30,7 @@ endif()
 
 # OpenMP
 if(APPLE)
-    set(CMAKE_CXX_COMPILER clang++)
+    set(CMAKE_CXX_COMPILER g++)
     set(CMAKE_CXX_FLAGS "${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY")
 
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang\$")

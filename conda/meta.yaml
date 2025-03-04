@@ -1,5 +1,7 @@
 {% set pyproject = load_file_data('pyproject.toml') %}
 {% set version = pyproject.get('project', {}).get('version') %}
+{% set home = pyproject.get('project', {}).get('urls').get('Homepage') %}
+{% set description = pyproject.get('project', {}).get('description') %}
 package:
   name: openalea.spice
   version: {{ version }}
@@ -77,4 +79,5 @@ test:
     - pytest
 
 about:
-  home: https://github.com/openalea-incubator/spice
+  home: {{ home }}
+  summary: {{ description }}

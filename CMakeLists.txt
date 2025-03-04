@@ -6,6 +6,11 @@ option(BUILD_CXX_EXAMPLE "build c++ example" OFF)
 
 # --- Build setup
 
+if(WIN32)
+    set(CMAKE_CXX_COMPILER g++)
+    set(cxx_compiler g++)
+endif()
+
 find_package(TBB CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 
@@ -33,10 +38,6 @@ if(APPLE)
         set(OpenMP_CXX_LIB_NAMES "omp")
         set(OpenMP_omp_LIBRARY omp)
     endif()
-endif()
-
-if(WIN32)
-    set(CMAKE_CXX_COMPILER g++)
 endif()
 
 # externals

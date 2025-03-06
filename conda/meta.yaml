@@ -43,6 +43,7 @@ requirements:
     - nanobind
     - pybind11-abi # [unix]
     - scikit-build-core
+    - vs2017_win-64 # [win]
     - scipy
 
   build:
@@ -54,6 +55,7 @@ requirements:
     - make
     - cmake
     - ninja
+    - vs2017_win-64 # [win]
     - nanobind
     - pybind11 # [unix]
     - embree

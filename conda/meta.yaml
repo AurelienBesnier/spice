@@ -26,12 +26,12 @@ build:
   number: 0
   preserve_egg_dir: True
   script_env:
-    - CMAKE_GEN=MinGW Makefiles # [win]
-    - CMAKE_GENERATOR=MinGW Makefiles # [win]
-    - CXX=g++ # [win]
-    - CC=gcc # [win]
-    - cxx_compiler=g++ # [win]
-    - c_compiler=gcc # [win]
+    - CMAKE_GEN=Visual Studio 17 2022 # [win]
+    - CMAKE_GENERATOR=Visual Studio 17 2022 # [win]
+    - CXX=cl.exe # [win]
+    - CC=cl.exe # [win]
+    - cxx_compiler=cl.exe # [win]
+    - c_compiler=cl.exe # [win]
   script:
     - {{PYTHON}} -m pip install . -vv
 
@@ -53,8 +53,7 @@ requirements:
     - scipy
     - make
     - cmake
-    - gcc   # [win]
-    - libstdcxx   # [win]
+    - vs2022_win-64 # [win]
     - ninja
     - nanobind
     - pybind11 # [unix]

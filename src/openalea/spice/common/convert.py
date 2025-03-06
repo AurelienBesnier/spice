@@ -1,5 +1,5 @@
 import openalea.plantgl.all as pgl
-from openalea.spice.spice import Scene, Vec3, VectorFloat, VectorUint
+from openalea.spice.libspice import Scene, Vec3, VectorFloat, VectorUint
 from openalea.spice.common.tools import flatten
 
 

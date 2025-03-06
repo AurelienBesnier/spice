@@ -397,7 +397,7 @@ class Simulator:
         self.N_mes_face_sensor.clear()
 
         n_estimation_global = 100
-        final_gathering_depth = 0
+        final_gathering_depth = 4
 
         for index in range(len(self.configuration.DIVIDED_SPECTRAL_RANGE)):
             start_time = time.time()
@@ -686,6 +686,7 @@ class Simulator:
             colors.append((r(), r(), r()))
         for _ in range(n_light):
             colors.append((r(), r(), r()))
+
 
         for phmap in self.photonmaps:
             for i in range(phmap.nPhotons()):

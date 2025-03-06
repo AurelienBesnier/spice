@@ -1,6 +1,6 @@
 [build-system]
-requires = ["scikit-build-core", "nanobind"]
-build-backend = "scikit_build_core.build"
+requires = ["scikit-build-core", "nanobind", "setuptools"]
+build-backend = "scikit_build_core.setuptools.build_meta"
 
 [project]
 name = "openalea.spice"
@@ -9,7 +9,6 @@ authors = [
     {name = "Tuan-Minh Nguyen"}
 ]
 description="Photon mapping with python wrapper"
-readme = "README.md"
 requires-python = ">=3.8"
 keywords = ["simulation", "light", "photon", "ray tracing"]
 classifiers = [
@@ -28,7 +27,7 @@ classifiers = [
   "Topic :: Scientific/Engineering",
 ]
 license = {file = "LICENSE"}
-version = "0.1.0"
+dynamic = ["version", "readme"]
 dependencies = [
   "pandas",
   "scipy",
@@ -62,10 +61,16 @@ test = [
   "pytest-cov",
 ]
 
+[tool.setuptools.dynamic]
+version = {attr = "openalea.spice.__version__"}
+readme = {file = ["README.md"]}
+
+[tool.setuptools.package-data]
+"*" = ["*spice*"]
+
 [tool.scikit-build]
 build-dir="./build/{wheel_tag}"
-sdist.include = ["*spice*"]
-logging.level = "INFO"
+logging.level = "WARNING"
 build.verbose = true
 
 [tool.scikit-build.cmake]

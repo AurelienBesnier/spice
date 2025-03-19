@@ -11,6 +11,8 @@ def pgl_to_spice(scene: pgl.Scene):
     for sh in scene:
         print(f"Adding shape {i}/{nb_shapes}", end="\r")
         sh.apply(tr)
+        if isinstance(sh.geometry, pgl.Text):
+            continue
         sh.geometry = tr.result
         sh.geometry.computeNormalList()
         normals = VectorFloat(flatten(sh.geometry.normalList))

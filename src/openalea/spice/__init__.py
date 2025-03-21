@@ -8,7 +8,8 @@ except ImportError:
         from openalea.spice.spice import *
     except ImportError:
         import sys
-        print("Could not import spice c++ library",file=sys.stderr)
+
+        print("Could not import spice c++ library", file=sys.stderr)
 
 
 __version__ = __version__

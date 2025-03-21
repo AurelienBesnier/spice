@@ -639,7 +639,6 @@ class Simulator:
         else:
             pgl.Viewer.display(self.scene_pgl)
 
-
     def get_photons_per_triangles(self):
         """
         Returns a counter object with the number of photon per triangle
@@ -687,7 +686,6 @@ class Simulator:
         for _ in range(n_light):
             colors.append((r(), r(), r()))
 
-
         for phmap in self.photonmaps:
             for i in range(phmap.nPhotons()):
                 photon = phmap.getIthPhoton(i).position
@@ -701,7 +699,9 @@ class Simulator:
                 position = photon[0]
                 color = colors[photon[1]]
                 s2 = pgl.Translated(position[0], position[1], position[2], sp)
-                sh = pgl.Shape(s2, pgl.Material(pgl.Color3(color[0], color[1], color[2])))
+                sh = pgl.Shape(
+                    s2, pgl.Material(pgl.Color3(color[0], color[1], color[2]))
+                )
                 ph_sc.add(sh)
             ph_sc.merge(self.scene_pgl)
             pgl.Viewer.display(ph_sc)
@@ -717,7 +717,7 @@ class Simulator:
             points = k3d.points(
                 positions,
                 point_size=1 * self.configuration.SCALE_FACTOR,
-                shader="dot",
+                shader="3d",
                 attribute=lights,
                 color_map=matplotlib_color_maps.Rainbow,
                 color_range=[0, n_light],

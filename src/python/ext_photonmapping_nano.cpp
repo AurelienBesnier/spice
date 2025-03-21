@@ -7,6 +7,7 @@
 #include <nanobind/stl/bind_vector.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <nanobind/operators.h>
 
 
 namespace nb = nanobind;
@@ -216,7 +217,7 @@ Render(UniformSampler& sampler,
 }
 
 
-NB_MODULE(spice, m)
+NB_MODULE(libspice, m)
 {
         m.doc() = "nanobind module for photon mapping";
 

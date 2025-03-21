@@ -6,6 +6,11 @@ option(BUILD_CXX_EXAMPLE "build c++ example" OFF)
 
 # --- Build setup
 
+if(WIN32)
+    set(CMAKE_CXX_COMPILER g++)
+    set(cxx_compiler g++)
+endif()
+
 find_package(TBB CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 
@@ -35,10 +40,6 @@ if(APPLE)
     endif()
 endif()
 
-if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CXXFLAGS} /std:c++latest /EHsc")
-endif()
-
 # externals
 add_subdirectory("externals")
 
@@ -56,7 +57,7 @@ set_target_properties(pm
         )
 
 
-target_link_libraries(pm INTERFACE OpenMP::OpenMP_CXX tinyobjloader embree)
+target_link_libraries(pm INTERFACE OpenMP::OpenMP_CXX tinyobjloader embree Threads::Threads)
 target_link_libraries(pm INTERFACE photon_map primitive triangle image)
 
 # examples
@@ -81,6 +82,6 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE nanobind_ROOT)
 find_package(nanobind CONFIG REQUIRED)
 
-install(TARGETS spice
+install(TARGETS libspice
         COMPONENT python
         LIBRARY DESTINATION "${CMAKE_SOURCE_DIR}/src/openalea/spice/")

@@ -1,6 +1,23 @@
+{% set pyproject = load_file_data('pyproject.toml') %}
+{% set home = pyproject.get('project', {}).get('urls').get('Homepage') %}
+{% set description = pyproject.get('project', {}).get('description') %}
+
+{% set major = load_file_regex(
+  load_file="src/openalea/spice/version.py",
+  regex_pattern='major = (.+)') %}
+{% set minor = load_file_regex(
+  load_file="src/openalea/spice/version.py",
+  regex_pattern='minor = (.+)') %}
+{% set post = load_file_regex(
+  load_file="src/openalea/spice/version.py",
+  regex_pattern='post = (.+)') %}
+
+{% set version = major[1]+'.'+minor[1]+'.'+post[1] %}
+
+
 package:
   name: openalea.spice
-  version: "0.1.0"
+  version: {{ version }}
 
 source:
   path: ..
@@ -8,6 +25,15 @@ source:
 build:
   number: 0
   preserve_egg_dir: True
+  script_env:
+    - CMAKE_GEN=Visual Studio 15 2017 # [win]
+    - CMAKE_GENERATOR=Visual Studio 15 2017 # [win]
+    - CXX=cl.exe # [win]
+    - CC=cl.exe # [win]
+    - cxx_compiler=cl.exe # [win]
+    - c_compiler=cl.exe # [win]
+  script:
+    - {{PYTHON}} -m pip install . -vv
 
 requirements:
   host:
@@ -15,7 +41,9 @@ requirements:
     - numpy x.x
     - nanobind-abi
     - nanobind
+    - pybind11-abi # [unix]
     - scikit-build-core
+    - vs2017_win-64 # [win]
     - scipy
 
   build:
@@ -26,9 +54,10 @@ requirements:
     - scipy
     - make
     - cmake
-    - vs2022_win-64 # [win]
     - ninja
+    - vs2017_win-64 # [win]
     - nanobind
+    - pybind11 # [unix]
     - embree
     - llvm-openmp
     - tbb
@@ -42,6 +71,7 @@ requirements:
     - openalea.lpy
     - oawidgets
     - ipywidgets
+    - nanobind
     - pandas
     - embree
     - matplotlib
@@ -63,4 +93,5 @@ test:
     - pytest
 
 about:
-  home: https://github.com/openalea-incubator/spice
+  home: {{ home }}
+  summary: {{ description }}

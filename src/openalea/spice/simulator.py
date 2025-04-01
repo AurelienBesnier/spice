@@ -654,6 +654,51 @@ class Simulator:
 
         return photons_triangles
 
+    def visualizeRays(self, mode="oawidgets"):
+        photons = []
+
+        def r():
+            return random.randint(0, 255)
+
+        # creating color per light source
+        colors = []
+        light_range = range(len(self.list_light))
+        n_light = self.scene.nLights()
+        for _ in light_range:
+            colors.append((r(), r(), r()))
+        for _ in range(n_light):
+            colors.append((r(), r(), r()))
+
+        for phmap in self.photonmaps:
+            for i in range(phmap.nPhotons()):
+                photon = phmap.getIthPhoton(i).position
+                light_id = phmap.getIthPhoton(i).lightId
+                photons.append(((photon[0], photon[1], photon[2]), light_id))
+
+        if mode == "oawidgets":
+            from oawidgets.plantgl import PlantGL
+            import k3d
+
+            plot = PlantGL(self.scene_pgl, group_by_color=False)
+            plot.grid_visible = False
+            lines = []
+            indices = []
+            i=0
+            for ph in photons:
+                pos = ph[0]
+                id = ph[1]
+
+                light = self.list_light[id]["position"]
+                light_pos = (light[0], light[1], light[2])
+                lines.append([pos, light_pos])
+                indices.append([i, i+1])
+                i+=2
+            lines = k3d.lines(lines, indices, indices_type='segment')
+            plot += lines
+            plot.camera_reset()
+            return plot
+
+
     def visualizePhotons(self, mode="ipython"):
         """
         Visualize the scene of simulation with the tools of OpenAlea

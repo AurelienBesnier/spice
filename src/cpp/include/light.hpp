@@ -139,10 +139,10 @@ class SpotLight : public Light
                               float& pdf) override
         {
                 float rad = deg2rad(angle);
-                float y = randomInterval(-rad, rad);
+                float x = randomInterval(-rad, rad);
                 float theta = randomInterval(0.0, rad * 2);
-                float r = sqrtf(1.0f - y * y);
-                float x = r * sinf(theta);
+                float r = sqrtf(1.0f - x * x);
+                float y = r * sinf(theta);
                 float z = r * cosf(theta);
 
                 Vec3f dir(x, y, z);

@@ -226,7 +226,7 @@ def read_rad(file: Path, scale_factor: int, invert_normals: bool):
                                 )
 
                                 vert = cylinder_vertices(
-                                    Vector3(x, y, z), Vector3(x2, y2, z2), 0
+                                    Vector3(x, y, z), Vector3(x2, y2, z2), r
                                 )
 
                                 shapes[name] = {

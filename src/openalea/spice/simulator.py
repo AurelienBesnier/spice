@@ -164,6 +164,7 @@ class Simulator:
         self.configuration = configuration
         if config_file != "":
             self.configuration.read_file(Path(config_file))
+            self.configuration.read_file(Path(config_file))
         self.n_samples = 512
         #
         self.scene_pgl = pgl.Scene()
@@ -372,15 +373,13 @@ class Simulator:
 
         self.list_virtual_sensor.append(sensor)
 
-    def applyWavelengthProperties(self, scene, current_band, average_wavelength):
+    def applyWavelengthProperties(self, current_band, average_wavelength):
         """
         Setup all the material for a simulation in a waveband.
 
         Parameters
         ----------
 
-        scene: spice.Scene
-            The object which contains all the object in the scene of simulation
         current_band: dict
             Current divided spectral range where the simulation is running
         average_wavelength: Vec3
@@ -420,6 +419,24 @@ class Simulator:
         n_estimation_global = 100
         final_gathering_depth = 4
 
+        if self.configuration.ENVIRONMENT_FILE != "":
+            self.scene = Scene()
+            n_estimation_global = 100
+            final_gathering_depth = 0
+            current_band = self.configuration.DIVIDED_SPECTRAL_RANGE[0]
+            average_wavelength = (current_band["start"] + current_band["end"]) / 2
+
+            (
+                self.scene,
+                _,
+                _,
+                _,
+                _,
+            ) = self.initSimulationScene(
+                self.scene, current_band, average_wavelength, False
+            )
+            self.scene.setupTriangles()
+
         for index in range(len(self.configuration.DIVIDED_SPECTRAL_RANGE)):
             start_time = time.time()
             current_band = self.configuration.DIVIDED_SPECTRAL_RANGE[index]
@@ -427,7 +444,7 @@ class Simulator:
             print("Wavelength:", current_band["start"], "-", current_band["end"])
             average_wavelength = (current_band["start"] + current_band["end"]) / 2
             # if average_wavelength != 0: # then use actual wavelength sim
-            self.applyWavelengthProperties(self.scene, current_band, average_wavelength)
+            self.applyWavelengthProperties(current_band, average_wavelength)
 
             # create integrator
             self.scene.tnear = self.configuration.T_MIN
@@ -858,7 +875,7 @@ class Simulator:
         elif mode == "oawidgets":
             from oawidgets.plantgl import PlantGL
 
-            plot = PlantGL(self.scene_pgl)
+            plot = PlantGL(self.scene_pgl, side='double')
             plot.camera_reset()
             return plot
 

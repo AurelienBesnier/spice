@@ -49,7 +49,6 @@ requirements:
   build:
     - {{ compiler("cxx") }}
     - python x.x
-    - numpy x.x
     - scikit-build-core
     - scipy
     - make
@@ -65,14 +64,14 @@ requirements:
 
   run:
     - python x.x
-    - numpy x.x
-    - jupyterlab
     - openalea.plantgl
     - openalea.lpy
     - oawidgets
     - ipywidgets
     - nanobind
     - pandas
+    - openpyxl
+    - scipy
     - embree
     - matplotlib
     - pywin32 [win]

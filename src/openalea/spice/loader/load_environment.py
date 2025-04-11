@@ -9,7 +9,7 @@ from openalea.spice.common.math import average_vector, geo_hemisphere
 from openalea.spice.common.tools import flatten, wavelength2rgb
 from openalea.plantgl.all import Color3, Scene
 
-# Objectif of this module is adding environment object to the scene of Photon Mapping
+# Objective of this module is adding environment object to the scene of Photon Mapping
 
 
 def addEnvironment(

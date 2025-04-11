@@ -1,6 +1,11 @@
 Openalea Spice documentation
 =======================================
 
+.. sidebar:: Summary
+
+    :Version: |version|
+    :Release: |release|
+    :Date: |today|
 
 .. toctree::
    :maxdepth: 2
@@ -12,5 +17,13 @@ Openalea Spice documentation
    notebook_examples.rst
 
 
-.. include:: ../../README.md
+.. include:: ../README.md
    :parser: myst_parser.sphinx_
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

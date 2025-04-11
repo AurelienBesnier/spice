@@ -15,3 +15,5 @@ dependencies:
   - tbb-devel
   - llvm-openmp
   - pip
+  - pip:
+      - pip ..[doc,notebook]

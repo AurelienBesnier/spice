@@ -361,7 +361,7 @@ To obtain the 3D scene, we have to run this program through ``ipython`` or if in
 
 | Here is the plantGL interface to visualize the scene
 
-.. image:: visualizeRoom.png
+.. image:: _static/visualizeRoom.png
   :width: 700
   :alt: Result of function test tmin
 
@@ -396,7 +396,7 @@ Test value Tmin
 
 | Here is a example of result
 
-.. image:: test_tmin.png
+.. image:: _static/test_tmin.png
   :width: 500
   :alt: Result of function test tmin
 

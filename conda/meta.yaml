@@ -95,3 +95,6 @@ test:
 about:
   home: {{ home }}
   summary: {{ description }}
+  license-file:
+    - LICENSE
+    - src/cpp/LICENSE

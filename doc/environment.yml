@@ -16,4 +16,4 @@ dependencies:
   - llvm-openmp
   - pip
   - pip:
-      - pip ..[doc,notebook]
+      - -e ..[doc,notebook]

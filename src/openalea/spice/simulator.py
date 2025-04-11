@@ -270,7 +270,9 @@ class Simulator:
         """
         sensor = Sensor(shape, "FaceSensor")
         self.list_face_sensor.append(sensor)
-        load_sensor.addFaceSensors(self.scene, self.face_sensor_triangle_dict, self.list_face_sensor)
+        load_sensor.addFaceSensors(
+            self.scene, self.face_sensor_triangle_dict, self.list_face_sensor
+        )
 
     def addFaceSensors(self, shapes):
         """
@@ -418,24 +420,6 @@ class Simulator:
 
         n_estimation_global = 100
         final_gathering_depth = 4
-
-        if self.configuration.ENVIRONMENT_FILE != "":
-            self.scene = Scene()
-            n_estimation_global = 100
-            final_gathering_depth = 0
-            current_band = self.configuration.DIVIDED_SPECTRAL_RANGE[0]
-            average_wavelength = (current_band["start"] + current_band["end"]) / 2
-
-            (
-                self.scene,
-                _,
-                _,
-                _,
-                _,
-            ) = self.initSimulationScene(
-                self.scene, current_band, average_wavelength, False
-            )
-            self.scene.setupTriangles()
 
         for index in range(len(self.configuration.DIVIDED_SPECTRAL_RANGE)):
             start_time = time.time()
@@ -586,19 +570,6 @@ class Simulator:
             A rendered scene in 3D
 
         """
-
-        # add face sensor
-        if len(self.list_face_sensor) > 0:
-            self.scene_pgl = load_sensor.addSensorPgl(
-                self.scene_pgl, self.list_face_sensor
-            )
-
-        # add sensor
-        if len(self.list_virtual_sensor) > 0:
-            self.scene_pgl = load_sensor.addSensorPgl(
-                self.scene_pgl, self.list_virtual_sensor
-            )
-
         cmap = matplotlib.cm.get_cmap(colormap)
 
         # Face sensors results
@@ -656,7 +627,7 @@ class Simulator:
             from oawidgets.plantgl import PlantGL
             import k3d
 
-            plot = PlantGL(self.scene_pgl, group_by_color=False)
+            plot = PlantGL(self.scene_pgl)
             plot.grid_visible = False
             i = 1
             for light in self.list_light:
@@ -692,7 +663,7 @@ class Simulator:
 
         return photons_triangles
 
-    def visualizeRays(self, mode="oawidgets", color=0x0000ff, opacity=1.0):
+    def visualizeRays(self, mode="oawidgets", color=0x0000FF, opacity=1.0):
         photons = []
 
         def r():
@@ -706,13 +677,11 @@ class Simulator:
             colors.append((r(), r(), r()))
         for _ in range(n_light):
             colors.append((r(), r(), r()))
-
         for phmap in self.photonmaps:
             for i in range(phmap.nPhotons()):
                 photon = phmap.getIthPhoton(i).position
                 light_id = phmap.getIthPhoton(i).lightId
                 photons.append(((photon[0], photon[1], photon[2]), light_id))
-
         if mode == "oawidgets":
             from oawidgets.plantgl import PlantGL
             import k3d
@@ -720,8 +689,8 @@ class Simulator:
 
             plot = k3d.plot()
             plot.grid_visible = False
-            indices, lines, light_ids  = [], [], []
-            i=0
+            indices, lines, light_ids = [], [], []
+            i = 0
             for ph in photons:
                 pos = ph[0]
                 id = ph[1]
@@ -730,8 +699,8 @@ class Simulator:
                 light_pos = (light[0], light[1], light[2])
                 light_ids.append([id, id])
                 lines.append([pos, light_pos])
-                indices.append([i, i+1])
-                i+=2
+                indices.append([i, i + 1])
+                i += 2
             lines = k3d.lines(
                 lines,
                 indices,
@@ -746,7 +715,6 @@ class Simulator:
             plot += lines
             plot.camera_reset()
             return plot
-
 
     def visualizePhotons(self, mode="ipython"):
         """
@@ -816,8 +784,7 @@ class Simulator:
                 color_map=matplotlib_color_maps.Rainbow,
                 color_range=[0, n_light],
             )
-
-            plot = PlantGL(self.scene_pgl, group_by_color=False, side='double')
+            plot = self.visualizeScene("oawidgets")
             plot.grid_visible = False
             plot += points
             i = 0
@@ -856,26 +823,13 @@ class Simulator:
             A rendered scene in 3D
 
         """
-
-        # add face sensor
-        if len(self.list_face_sensor) > 0:
-            self.scene_pgl = load_sensor.addSensorPgl(
-                self.scene_pgl, self.list_face_sensor
-            )
-
-        # add sensor
-        if len(self.list_virtual_sensor) > 0:
-            self.scene_pgl = load_sensor.addSensorPgl(
-                self.scene_pgl, self.list_virtual_sensor
-            )
-
         if mode == "ipython":
             pgl.Viewer.display(self.scene_pgl)
 
         elif mode == "oawidgets":
             from oawidgets.plantgl import PlantGL
 
-            plot = PlantGL(self.scene_pgl, side='double')
+            plot = PlantGL(self.scene_pgl, side="double")
             plot.camera_reset()
             return plot
 
@@ -1141,6 +1095,13 @@ class Simulator:
             self.configuration.ENVIRONMENT_FILE,
             self.configuration.SCALE_FACTOR,
             flip_normal,
+        )
+
+    def setup(self):
+        self.scene_pgl = load_sensor.addSensorPgl(self.scene_pgl, self.list_face_sensor)
+
+        self.scene_pgl = load_sensor.addSensorPgl(
+            self.scene_pgl, self.list_virtual_sensor
         )
 
     def setupRender(self, lookfrom=Vec3(0, 0, 0), lookat=Vec3(0, 0, 0), vfov=50.0):

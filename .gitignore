@@ -1,7 +1,7 @@
 .vscode/
 .cache/
 build/
-docs/
+doc/
 .idea/
 .DS_Store
 CMakeLists.txt.user
@@ -87,7 +87,8 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+doc/_build/
+doc/build/
 
 # PyBuilder
 .pybuilder/
@@ -238,7 +239,7 @@ buildNumber.properties
 
 # ignore ALL files in Build directory
 build/
-!docs/build/
+!doc/build/
 
 # ignore ALL files in pycache
 __pycache__/

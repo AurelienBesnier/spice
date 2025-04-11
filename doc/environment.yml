@@ -1,0 +1,19 @@
+name: spice
+channels:
+  - conda-forge
+  - openalea3
+dependencies:
+  - python
+  - openalea.lpy
+  - openalea.plantgl
+  - oawidgets
+  - embree
+  - make
+  - cxx-compiler
+  - cmake
+  - tbb
+  - tbb-devel
+  - llvm-openmp
+  - pip
+  - pip:
+      - -e ..[doc,notebook]

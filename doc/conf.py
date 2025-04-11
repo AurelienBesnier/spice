@@ -30,6 +30,7 @@ extensions = [
     "nbsphinx",  # for integrating jupyter notebooks
     "myst_parser",  # for parsing .md files
 ]
+nbsphinx_allow_errors = True
 
 templates_path = ["_templates"]
 autosummary_generate = True
@@ -84,7 +85,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "GitHub",
-            "url": "https://github.com/openalea-incubator/photon_mapping",
+            "url": "https://github.com/openalea-incubator/spice",
             "icon": "fa-brands fa-github",
         },
     ],

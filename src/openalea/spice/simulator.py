@@ -372,15 +372,13 @@ class Simulator:
 
         self.list_virtual_sensor.append(sensor)
 
-    def applyWavelengthProperties(self, scene, current_band, average_wavelength):
+    def applyWavelengthProperties(self, current_band, average_wavelength):
         """
         Setup all the material for a simulation in a waveband.
 
         Parameters
         ----------
 
-        scene: spice.Scene
-            The object which contains all the object in the scene of simulation
         current_band: dict
             Current divided spectral range where the simulation is running
         average_wavelength: Vec3
@@ -427,7 +425,7 @@ class Simulator:
             print("Wavelength:", current_band["start"], "-", current_band["end"])
             average_wavelength = (current_band["start"] + current_band["end"]) / 2
             # if average_wavelength != 0: # then use actual wavelength sim
-            self.applyWavelengthProperties(self.scene, current_band, average_wavelength)
+            self.applyWavelengthProperties(current_band, average_wavelength)
 
             # create integrator
             self.scene.tnear = self.configuration.T_MIN

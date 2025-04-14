@@ -9,7 +9,6 @@ from collections import Counter
 import matplotlib
 import matplotlib.pyplot as plt
 
-from openalea.lpy import Lsystem
 from openalea.spice.libspice import (
     Render,
     visualizeSensorsPhotonMap,
@@ -21,6 +20,11 @@ from openalea.spice.libspice import (
     Image,
     Camera,
 )
+try:
+    from openalea.lpy import Lsystem
+except ImportError:
+    pass
+
 import openalea.plantgl.all as pgl
 
 from openalea.spice.energy import calculate_energy, correct_energy

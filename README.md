@@ -2,6 +2,10 @@
 [![Python Version](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![License: CeCILL-C](https://img.shields.io/badge/License--CeCILL-C-blue)](https://cecill.info/licences/Licence_CeCILL_V2-en.html)
+[![Anaconda-Server Badge](https://anaconda.org/openalea3/openalea.spice/badges/version.svg)](https://anaconda.org/openalea3/openalea.spice)
+[![Anaconda-Server Badge](https://anaconda.org/openalea3/openalea.spice/badges/latest_release_date.svg)](https://anaconda.org/openalea3/openalea.spice)
+[![Anaconda-Server Badge](https://anaconda.org/openalea3/openalea.spice/badges/platforms.svg)](https://anaconda.org/openalea3/openalea.spice)
+
 
 # openalea.spice
 

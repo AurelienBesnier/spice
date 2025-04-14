@@ -1,4 +1,3 @@
-include /src/openalea/spice/*.so
-include /src/openalea/spice/*.dylib
-include /src/openalea/spice/*.dll
-include /src/openalea/spice/*.a
+include README.md
+
+recursive-include src/openalea/spice *

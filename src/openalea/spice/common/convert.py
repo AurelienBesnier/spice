@@ -1,11 +1,11 @@
 import openalea.plantgl.all as pgl
-from openalea.spice.libspice import Scene, Vec3, VectorFloat, VectorUint
+from openalea.spice.libspice import Vec3, VectorFloat, VectorUint
 from openalea.spice.common.tools import flatten
-from openalea.spice import Scene as sp_scene
+from openalea.spice.loader.load_sensor import Sensor, addFaceSensors
+from openalea.spice.simulator import Simulator
 
 
-def pgl_to_spice(scene: pgl.Scene, sensors=False, setup=True):
-    spice_scene = Scene()
+def pgl_to_spice(scene: pgl.Scene, sim: Simulator, sensors=False, setup=True):
     nb_shapes = len(scene)
     i = 1
     tr = pgl.Tesselator()
@@ -40,18 +40,10 @@ def pgl_to_spice(scene: pgl.Scene, sensors=False, setup=True):
 
         shininess = sh.appearance.shininess
         if sensors:
-            spice_scene.addFaceSensorInfos(
-                vertices,
-                indices,
-                normals,
-                "sensor",
-                refl,
-                specular,
-                trans,
-                1.0 - shininess,
-            )
+            sensor = Sensor(sh, "FaceSensor")
+            sim.list_face_sensor.append(sensor)
         else:
-            spice_scene.addFaceInfos(
+            sim.scene.addFaceInfos(
                 vertices,
                 indices,
                 normals,
@@ -68,14 +60,18 @@ def pgl_to_spice(scene: pgl.Scene, sensors=False, setup=True):
                 1.0 - shininess,
             )
         i += 1
-    if setup:
-        spice_scene.setupTriangles()
 
-    return spice_scene
+    if sim.list_face_sensor:
+        addFaceSensors(
+            sim.scene, sim.face_sensor_triangle_dict, sim.list_face_sensor
+        )
+
+    if setup:
+        sim.scene.setupTriangles()
 
 
 def spice_add_pgl(
-    spice_scene: sp_scene, pgl_scene: pgl.Scene, sensors=False, setup=False
+    sim: Simulator, pgl_scene: pgl.Scene, sensors=False, setup=False
 ):
     nb_shapes = len(pgl_scene)
     i = 1
@@ -111,18 +107,10 @@ def spice_add_pgl(
 
         shininess = sh.appearance.shininess
         if sensors:
-            spice_scene.addFaceSensorInfos(
-                vertices,
-                indices,
-                normals,
-                "sensor",
-                refl,
-                specular,
-                trans,
-                1.0 - shininess,
-            )
+            sensor = Sensor(sh, "FaceSensor")
+            sim.list_face_sensor.append(sensor)
         else:
-            spice_scene.addFaceInfos(
+            sim.scene.addFaceInfos(
                 vertices,
                 indices,
                 normals,
@@ -139,7 +127,10 @@ def spice_add_pgl(
                 1.0 - shininess,
             )
         i += 1
-    if setup:
-        spice_scene.setupTriangles()
 
-    return spice_scene
+    if sim.list_face_sensor:
+        addFaceSensors(
+            sim.scene, sim.face_sensor_triangle_dict, sim.list_face_sensor
+        )
+    if setup:
+        sim.scene.setupTriangles()

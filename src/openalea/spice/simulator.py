@@ -627,7 +627,7 @@ class Simulator:
             from oawidgets.plantgl import PlantGL
             import k3d
 
-            plot = PlantGL(self.scene_pgl)
+            plot = PlantGL(self.scene_pgl, side="double")
             plot.grid_visible = False
             i = 1
             for light in self.list_light:

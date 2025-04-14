@@ -7,9 +7,9 @@ from openalea.spice import (
 )
 from openalea.spice.common.math import average_vector, geo_hemisphere
 from openalea.spice.common.tools import flatten, wavelength2rgb
-from openalea.plantgl.all import Color3, Scene
+from openalea.plantgl.all import Color3, Scene, Text
 
-# Objectif of this module is adding environment object to the scene of Photon Mapping
+# Objective of this module is adding environment object to the scene of Photon Mapping
 
 
 def addEnvironment(
@@ -42,6 +42,9 @@ def addEnvironment(
         If True, add only the lamps and captors, If False, add all the objects in room
 
     """
+    if isinstance(sh.geometry, Text):
+        return
+
     normals = VectorFloat(flatten(sh.geometry.normalList))
     indices = VectorUint(flatten(sh.geometry.indexList))
     vertices = VectorFloat(flatten(sh.geometry.pointList))

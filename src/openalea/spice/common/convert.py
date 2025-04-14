@@ -3,6 +3,7 @@ from openalea.spice.libspice import Scene, Vec3, VectorFloat, VectorUint
 from openalea.spice.common.tools import flatten
 from openalea.spice import Scene as sp_scene
 
+
 def pgl_to_spice(scene: pgl.Scene, sensors=False, setup=True):
     spice_scene = Scene()
     nb_shapes = len(scene)
@@ -73,7 +74,9 @@ def pgl_to_spice(scene: pgl.Scene, sensors=False, setup=True):
     return spice_scene
 
 
-def spice_add_pgl(spice_scene: sp_scene, pgl_scene: pgl.Scene, sensors=False, setup=False):
+def spice_add_pgl(
+    spice_scene: sp_scene, pgl_scene: pgl.Scene, sensors=False, setup=False
+):
     nb_shapes = len(pgl_scene)
     i = 1
     tr = pgl.Tesselator()
@@ -91,7 +94,7 @@ def spice_add_pgl(spice_scene: sp_scene, pgl_scene: pgl.Scene, sensors=False, se
             sh.appearance.ambient.red / 255.0,
             sh.appearance.ambient.green / 255.0,
             sh.appearance.ambient.blue / 255.0,
-            )
+        )
         diffuse = ambient
 
         material_name = sh.appearance.name
@@ -117,7 +120,7 @@ def spice_add_pgl(spice_scene: sp_scene, pgl_scene: pgl.Scene, sensors=False, se
                 specular,
                 trans,
                 1.0 - shininess,
-                )
+            )
         else:
             spice_scene.addFaceInfos(
                 vertices,
@@ -134,7 +137,7 @@ def spice_add_pgl(spice_scene: sp_scene, pgl_scene: pgl.Scene, sensors=False, se
                 refl,
                 trans,
                 1.0 - shininess,
-                )
+            )
         i += 1
     if setup:
         spice_scene.setupTriangles()

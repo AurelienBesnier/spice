@@ -1,13 +1,14 @@
 [![Build Status](https://github.com/openalea-incubator/spice/actions/workflows/conda-build.yml/badge.svg?branch=main)](https://github.com/openalea-incubator/spice/actions/workflows/conda-package-build.yml?query=branch%3Amaster)
 [![Python Version](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: CeCILL-C](https://img.shields.io/badge/License--CeCILL-C-blue)](https://cecill.info/licences/Licence_CeCILL_V2-en.html)
 
 # openalea.spice
 
 minimal but extensible header only implementation of photon mapping in C++.
 
-# How to compile:
-*Install Miniforge*: https://github.com/conda-forge/miniforge
+## How to compile:
+*Install Miniforge*: [https://github.com/conda-forge/miniforge](https://github.com/conda-forge/miniforge)
 
 Follow installation instructions. Use default installation settings.
 
@@ -52,6 +53,11 @@ This work was funded by INRAe Metaprogramme DIGIT-BIO (Digital biology to explor
 
 ## Use case 
 This project is used in the coupling of [MorphoNet](https://morphonet.org) and [L-Py](https://github.com/openalea/lpy) for the project Physioscope.
+
+## Licenses
+The core of the photon mapping engine is released under the MIT License by [YumcyaWiz](https://github.com/yumcyaWiz/).
+
+The rest of the repository is released under the CeCILL-C free software license agreement.
 
 ## References
 

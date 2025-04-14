@@ -57,6 +57,7 @@ requirements:
     - pandas
     - openpyxl
     - matplotlib
+    - scipy
     - embree
     - pywin32 [win]
 

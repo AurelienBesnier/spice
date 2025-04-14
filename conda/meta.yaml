@@ -65,15 +65,10 @@ requirements:
   run:
     - python x.x
     - openalea.plantgl
-    - openalea.lpy
-    - oawidgets
-    - ipywidgets
     - nanobind
     - pandas
     - openpyxl
-    - scipy
     - embree
-    - matplotlib
     - pywin32 [win]
 
 test:

@@ -1,4 +1,8 @@
-from openalea.lpy import Lsystem
+try:
+    from openalea.lpy import Lsystem
+except:
+    pass
+
 from openalea.spice import (
     Vec3,
     VectorFloat,

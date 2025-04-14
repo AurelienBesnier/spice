@@ -68,6 +68,7 @@ requirements:
     - nanobind
     - pandas
     - openpyxl
+    - matplotlib
     - embree
     - pywin32 [win]
 

@@ -1,5 +1,5 @@
 from openalea.spice import *
-from .version import __version__
+from importlib.metadata import version, PackageNotFoundError
 
 try:
     from openalea.spice.libspice import *
@@ -12,4 +12,8 @@ except ImportError:
         print("Could not import spice c++ library", file=sys.stderr)
 
 
-__version__ = __version__
+try:
+    __version__ = version("openalea.spice")
+except PackageNotFoundError:
+    # package is not installed
+    pass

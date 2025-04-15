@@ -26,7 +26,7 @@ classifiers = [
   "Topic :: Scientific/Engineering",
 ]
 license-files = ["LICEN[CS]E*", "src/cpp/LICENSE"]
-version = "1.0.1"
+version = "1.0.2"
 readme = "README.md"
 dependencies = [
   "pandas",
@@ -36,10 +36,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/openalea-incubator/photon_mapping"
-"Bug Tracker" = "https://github.com/openalea-incubator/photon_mapping/issues"
-Discussions = "https://github.com/openalea-incubator/photon_mapping/discussions"
-Changelog = "https://github.com/openalea-incubator/photon_mapping/releases"
+Homepage = "https://github.com/openalea-incubator/spice"
+"Bug Tracker" = "https://github.com/openalea-incubator/spice/issues"
+Discussions = "https://github.com/openalea-incubator/spice/discussions"
+Changelog = "https://github.com/openalea-incubator/spice/releases"
 
 [project.optional-dependencies]
 pybind=["pybind11"]

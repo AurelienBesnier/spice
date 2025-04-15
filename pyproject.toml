@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core", "nanobind"]
+requires = ["scikit-build-core", "nanobind", "setuptools-scm"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -26,8 +26,9 @@ classifiers = [
   "Topic :: Scientific/Engineering",
 ]
 license-files = ["LICEN[CS]E*", "src/cpp/LICENSE"]
-version = "1.0.1"
+# version = "1.0.2"
 readme = "README.md"
+dynamic = ["version"]
 dependencies = [
   "pandas",
   "scipy",
@@ -36,10 +37,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/openalea-incubator/photon_mapping"
-"Bug Tracker" = "https://github.com/openalea-incubator/photon_mapping/issues"
-Discussions = "https://github.com/openalea-incubator/photon_mapping/discussions"
-Changelog = "https://github.com/openalea-incubator/photon_mapping/releases"
+Homepage = "https://github.com/openalea-incubator/spice"
+"Bug Tracker" = "https://github.com/openalea-incubator/spice/issues"
+Discussions = "https://github.com/openalea-incubator/spice/discussions"
+Changelog = "https://github.com/openalea-incubator/spice/releases"
 
 [project.optional-dependencies]
 pybind=["pybind11"]
@@ -65,11 +66,13 @@ test = [
 "*" = ["*.so", "*.dylib", "*.dll"]
 
 [tool.scikit-build]
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
 build-dir="./build/{wheel_tag}"
-sdist.include = ["*.so", "*.dylib", "*.dll"]
+sdist.include = ["*.so", "*.dylib", "*.dll", "src/openalea/spice/_version.py"]
 sdist.exclude = ["*.pyc", "*.pyo"]
 logging.level = "WARNING"
 build.verbose = true
+experimental = true
 
 [tool.scikit-build.cmake]
 build-type="Release"
@@ -77,3 +80,6 @@ source-dir="."
 
 [tool.scikit-build.wheel]
 packages = ["src/openalea"]
+
+[tool.setuptools_scm]  # Section required
+write_to = "src/openalea/spice/_version.py"

@@ -1,18 +1,16 @@
 {% set pyproject = load_file_data('pyproject.toml') %}
-{% set home = pyproject.get('project', {}).get('urls').get('Homepage') %}
-{% set description = pyproject.get('project', {}).get('description') %}
-{% set version = pyproject.get('project', {}).get('version') %}
+{% set home = pyproject['project']['urls']['Homepage'] %}
+{% set description = pyproject['project']['description'] %}
+# {% set version = pyproject['project']['version'] %}
 
 package:
   name: openalea.spice
-  version: {{ version }}
+  version: {{ GIT_DESCRIBE_TAG }}
 
 source:
   path: ..
 
 build:
-  number: 0
-  preserve_egg_dir: True
   script_env:
     - CMAKE_GEN=Visual Studio 15 2017 # [win]
     - CMAKE_GENERATOR=Visual Studio 15 2017 # [win]
@@ -31,6 +29,7 @@ requirements:
     - nanobind
     - pybind11-abi # [unix]
     - scikit-build-core
+    - setuptools-scm
     - vs2017_win-64 # [win]
     - scipy
 
@@ -38,6 +37,7 @@ requirements:
     - {{ compiler("cxx") }}
     - python x.x
     - scikit-build-core
+    - setuptools-scm
     - scipy
     - make
     - cmake

@@ -168,7 +168,6 @@ class Simulator:
         self.configuration = configuration
         if config_file != "":
             self.configuration.read_file(Path(config_file))
-            self.configuration.read_file(Path(config_file))
         self.n_samples = 512
         #
         self.scene_pgl = pgl.Scene()
@@ -1102,11 +1101,37 @@ class Simulator:
         )
 
     def setup(self):
-        self.scene_pgl = load_sensor.addSensorPgl(self.scene_pgl, self.list_face_sensor)
+        self.addFaceSensors(self.scene_pgl)
 
         self.scene_pgl = load_sensor.addSensorPgl(
             self.scene_pgl, self.list_virtual_sensor
         )
+
+        load_sensor.addVirtualSensors(
+            self.scene, self.virtual_sensor_triangle_dict, self.list_virtual_sensor
+        )
+
+        current_band = self.configuration.DIVIDED_SPECTRAL_RANGE[0]
+        average_wavelength = (current_band["start"] + current_band["end"]) / 2
+
+        materials_r, materials_s, materials_t = read_properties.setup_dataset_materials(
+            current_band["start"],
+            current_band["end"],
+            self.configuration.OPTICAL_PROPERTIES_DIR,
+        )
+
+        for sh in self.scene_pgl:
+            load_environment.addEnvironment(
+                self.scene,
+                sh,
+                average_wavelength,
+                materials_r,
+                materials_s,
+                materials_t,
+            )
+
+
+        self.scene.setupTriangles()
 
     def setupRender(self, lookfrom=Vec3(0, 0, 0), lookat=Vec3(0, 0, 0), vfov=50.0):
         """
@@ -1190,7 +1215,8 @@ class Simulator:
             mesh = pgl.Shape(tr.result, sh.appearance, sh.id)
             self.addFaceSensorToScene(mesh, position, scale_factor)
 
-    def initCameraRender(self, lookfrom=Vec3(0, 0, 0), lookat=Vec3(0, 0, 0), vfov=50.0):
+    @staticmethod
+    def initCameraRender(lookfrom=Vec3(0, 0, 0), lookat=Vec3(0, 0, 0), vfov=50.0):
         """
         Init the camera to render image. Called by the function setupRender
 

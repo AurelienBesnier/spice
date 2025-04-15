@@ -56,7 +56,7 @@ def cylinder_vertices(start, end, rayon):
     return vert
 
 
-def read_rad(file: Path, scale_factor: int, invert_normals: bool):
+def read_rad(file: Path, scale_factor: float, invert_normals: bool):
     """
     Parse a radiance file (https://radsite.lbl.gov/radiance/framed.html) to a
     make a plantGL Scene
@@ -65,7 +65,7 @@ def read_rad(file: Path, scale_factor: int, invert_normals: bool):
     ----------
     file: Path
         the rad file path
-    scale_factor: int
+    scale_factor: float
         The size of geometries. The vertices of geometries is recalculated by
         dividing their coordinates by this value
     invert_normals: bool

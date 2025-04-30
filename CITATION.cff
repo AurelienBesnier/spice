@@ -1,0 +1,22 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Spice
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Aurélien
+    family-names: Besnier
+    affiliation: INRAE
+    orcid: 'https://orcid.org/0009-0004-8523-4419'
+  - given-names: Tuan-Minh
+    family-names: Nguyen
+    affiliation: INRAE
+repository-code: 'https://github.com/openalea-incubator/spice'
+keywords:
+  - photon mapping
+  - light simulation
+license: CECILL-C

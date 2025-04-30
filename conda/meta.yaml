@@ -23,8 +23,8 @@ build:
 
 requirements:
   host:
-    - python x.x
-    - numpy x.x
+    - python
+    - numpy
     - nanobind-abi
     - nanobind
     - pybind11-abi # [unix]
@@ -35,7 +35,7 @@ requirements:
 
   build:
     - {{ compiler("cxx") }}
-    - python x.x
+    - python
     - scikit-build-core
     - setuptools-scm
     - scipy
@@ -51,7 +51,7 @@ requirements:
     - tbb-devel
 
   run:
-    - python x.x
+    - python
     - openalea.plantgl
     - nanobind
     - pandas

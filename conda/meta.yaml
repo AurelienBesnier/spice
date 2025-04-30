@@ -5,7 +5,7 @@
 
 package:
   name: openalea.spice
-  version: {{ GIT_DESCRIBE_TAG }}
+  version: {{ GIT_DESCRIBE_TAG|replace("v", "") }}
 
 source:
   path: ..

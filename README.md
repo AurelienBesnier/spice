@@ -11,7 +11,7 @@
 
 minimal but extensible header only implementation of photon mapping in C++.
 
-## How to compile:
+## Installation:
 *Install Miniforge*: [https://github.com/conda-forge/miniforge](https://github.com/conda-forge/miniforge)
 
 Follow installation instructions. Use default installation settings.
@@ -19,21 +19,9 @@ Follow installation instructions. Use default installation settings.
 Execute next commands in anaconda prompt.
 
 ### Creating an environment
-create and activate the conda environment:
+create and activate the conda environment and install spice:
 ```bash
-mamba env create -f environment.yml -n photonmap
-mamba activate photonmap
-```
-To install as a Python library:
-```bash
-python -m pip install ./
-```
-
-To compile the source code without installing (useful for debugging):
-```bash
-[ -d ./build ] || mkdir ./build; cd ./build
-cmake -DCMAKE_BUILD_TYPE=Debug ../
-make -j
+mamba create -n spice -c conda-forge -c openalea3 openalea.spie
 ```
 
 ### Examples

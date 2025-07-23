@@ -21,7 +21,7 @@ Execute next commands in anaconda prompt.
 ### Creating an environment
 create and activate the conda environment and install spice:
 ```bash
-mamba create -n spice -c conda-forge -c openalea3 openalea.spie
+mamba create -n spice -c conda-forge -c openalea3 openalea.spice
 ```
 
 ### Examples

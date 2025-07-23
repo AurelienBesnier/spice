@@ -17,6 +17,8 @@ source:
   path: ..
 
 build:
+  number: 0
+  string: py{{ PY_VER }}
   script_env:
     - CMAKE_GEN=Visual Studio 15 2017 # [win]
     - CMAKE_GENERATOR=Visual Studio 15 2017 # [win]

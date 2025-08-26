@@ -18,13 +18,6 @@ source:
 build:
   number: 0
   string: py{{ PY_VER }}
-  script_env:
-    - CMAKE_GEN=Visual Studio 15 2017 # [win]
-    - CMAKE_GENERATOR=Visual Studio 15 2017 # [win]
-    - CXX=cl.exe # [win]
-    - CC=cl.exe # [win]
-    - cxx_compiler=cl.exe # [win]
-    - c_compiler=cl.exe # [win]
   script:
     - {{PYTHON}} -m pip install . -vv
 
@@ -34,13 +27,11 @@ requirements:
     - numpy
     - nanobind-abi
     - nanobind
-    - pybind11-abi # [unix]
     - scikit-build-core
     - setuptools-scm
-    - vs2017_win-64 # [win]
-    - scipy
 
   build:
+    - {{ compiler('c') }}
     - {{ compiler("cxx") }}
     - python
     - scikit-build-core
@@ -49,9 +40,7 @@ requirements:
     - make
     - cmake
     - ninja
-    - vs2017_win-64 # [win]
     - nanobind
-    - pybind11 # [unix]
     - embree
     - llvm-openmp
     - tbb
@@ -66,7 +55,7 @@ requirements:
     - matplotlib
     - scipy
     - embree
-    - pywin32 [win]
+    - pywin32 # [win]
 
 test:
   imports:
@@ -77,15 +66,17 @@ test:
     - openalea.spice.reader
     - openalea.spice.simulator
   requires:
+    - openalea.plantgl
     - pytest
   source_files:
     - tests/**
   commands:
-    - pytest
+    - pytest -v
 
 about:
-  summary: {{ pyproject["project"]["description"] }}
+  description: {{ description }}
+  summary: {{ description }}
   license-file:
     - LICENSE
     - src/cpp/LICENSE
-  home: {{ pyproject["project"]["urls"]["Homepage"] }}
+  home: {{ home }}

@@ -299,7 +299,7 @@ class Scene
                           float roughness = 0.0f)
         {
                 omp_set_num_threads(omp_get_max_threads() / 2);
-#pragma omp parallel for
+//#pragma omp parallel for
                 for (uint32_t& i : newIndices) {
                         i += nVertices();
                 }

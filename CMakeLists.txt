@@ -1,16 +1,12 @@
 cmake_minimum_required(VERSION 3.20)
 project(photon_mapping LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 23)
+
 option(BUILD_TESTS "build c++ tests" OFF)
 option(BUILD_CXX_EXAMPLE "build c++ example" OFF)
 
 # --- Build setup
-
-if(WIN32)
-    set(CMAKE_CXX_COMPILER g++)
-    set(cxx_compiler g++)
-endif()
-
 find_package(TBB CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 

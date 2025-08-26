@@ -1,6 +1,12 @@
 #include "photon_map.hpp"
-
-#include <execution>
+#ifdef defined(_MSC_VER)
+namespace std
+{
+    #include <execution>
+};
+#else
+    #include <execution>
+#endif
 #include <algorithm>
 #include <numeric>
 

@@ -1,4 +1,0 @@
-cxx_compiler:
-  - gxx                        # [linux]
-  - clangxx                    # [osx]
-  - vs2022                     # [win]

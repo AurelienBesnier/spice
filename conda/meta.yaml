@@ -24,38 +24,25 @@ build:
 requirements:
   host:
     - python
-    - numpy
     - nanobind-abi
-    - nanobind
-    - scikit-build-core
-    - setuptools-scm
+    {% for dep in build_deps %}
+    - {{ dep }}
+    {% endfor  %}
 
   build:
-    - {{ compiler('c') }}
     - {{ compiler("cxx") }}
     - python
-    - scikit-build-core
-    - setuptools-scm
-    - scipy
-    - make
-    - cmake
-    - ninja
-    - nanobind
-    - embree
-    - llvm-openmp
-    - tbb
-    - tbb-devel
+    {% for dep in deps + conda_deps %}
+    - {{ dep }}
+    {% endfor %}
 
   run:
     - python
-    - openalea.plantgl
     - nanobind
-    - pandas
-    - openpyxl
-    - matplotlib
-    - scipy
-    - embree
-    - pywin32 # [win]
+    {% for dep in deps + conda_deps %}
+    - {{ dep }}
+    {% endfor %}
+#    - pywin32 # [win]
 
 test:
   imports:

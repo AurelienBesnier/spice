@@ -42,7 +42,6 @@ requirements:
     {% for dep in deps + conda_deps %}
     - {{ dep }}
     {% endfor %}
-#    - pywin32 # [win]
 
 test:
   imports:

@@ -77,7 +77,7 @@ dependencies = [
 
 [tool.setuptools_scm]
 # Format version to ease alignment with conda/meta.yaml tag-based versioning
-fallback_version = "1.0.4.dev0"
+fallback_version = "1.0.3.dev0"
 version_scheme = "guess-next-dev"
 local_scheme = "no-local-version"
 

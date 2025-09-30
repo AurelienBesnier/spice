@@ -15,14 +15,6 @@ authors:
   - given-names: Tuan-Minh
     family-names: Nguyen
     affiliation: INRAE
-  - given-names: Frederic
-    family-names: Boudon
-    affiliation: CIRAD
-    orcid: 'https://orcid.org/0000-0001-9636-3102'
-  - given-names: Jessica
-    family-names: Bertheloot
-    affiliation: INRAE
-    orcid: 'https://orcid.org/0000-0001-5941-2227'
   - given-names: Thomas
     family-names: Arsouze
     affiliation: CIRAD
@@ -31,6 +23,14 @@ authors:
     family-names: Faure
     affiliation: LIRMM
     orcid: 'https://orcid.org/0000-0003-2787-0885'
+  - given-names: Jessica
+    family-names: Bertheloot
+    affiliation: INRAE
+    orcid: 'https://orcid.org/0000-0001-5941-2227'
+  - given-names: Frederic
+    family-names: Boudon
+    affiliation: CIRAD
+    orcid: 'https://orcid.org/0000-0001-9636-3102'
 repository-code: 'https://github.com/openalea-incubator/spice'
 keywords:
   - photon mapping

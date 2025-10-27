@@ -80,4 +80,4 @@ find_package(nanobind CONFIG REQUIRED)
 
 install(TARGETS libspice
         COMPONENT python
-        LIBRARY DESTINATION "${CMAKE_SOURCE_DIR}/src/openalea/spice/")
+        LIBRARY DESTINATION "${SKBUILD_PLATLIB_DIR}/openalea/spice/")

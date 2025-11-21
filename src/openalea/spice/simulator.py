@@ -626,6 +626,7 @@ class Simulator:
 
         if mode == "ipython":
             pgl.Viewer.display(self.scene_pgl)
+            return None
         elif mode == "oawidgets":
             from oawidgets.plantgl import PlantGL
             import k3d
@@ -650,6 +651,7 @@ class Simulator:
             return plot
         else:
             pgl.Viewer.display(self.scene_pgl)
+            return None
 
     def get_photons_per_triangles(self):
         """
@@ -1143,6 +1145,8 @@ class Simulator:
             The position of the camera.
         lookat: Vec3
             The point where the camera is looking at
+        vfov: float
+            The vertical field of view of the camera
 
         """
         self.configuration.RENDERING = True
@@ -1226,6 +1230,8 @@ class Simulator:
             The position of the camera.
         lookat: Vec3
             The point where the camera is looking at
+        vfov: float
+            The vertical field of view of the camera
 
         Returns
         -------

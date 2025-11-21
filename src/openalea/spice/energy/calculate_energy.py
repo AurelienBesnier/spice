@@ -1,7 +1,7 @@
 import os
 
 # Objective of this module is counting the number of photon on plant/sensor
-# Resultat is located in this directory: ./results
+# Result is located in this directory: ./results
 
 
 def write_sensor_energy(n_sim, n_calibration, sensor_list, bands_spectre, filename):

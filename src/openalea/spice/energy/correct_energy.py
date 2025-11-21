@@ -93,13 +93,13 @@ def get_correct_energy_coeff(
     divided_spectral_range: range
         The section of the base spectral range used to run the simulation
     spec_file: str
-        The link to the file which contains the informations of the
+        The link to the file which contains the information of the
         heterogeneity of the spectrum
 
     Returns
     -------
     integrals: array
-        The list of the coefficents of energy's correction
+        The list of the coefficients of energy's correction
 
     """
 

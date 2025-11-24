@@ -54,7 +54,7 @@ class Configuration:
 
         Parameters
         ----------
-        filepath: str
+        filepath: Path
             Name of the configuration file.
 
         """

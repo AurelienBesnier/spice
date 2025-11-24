@@ -1,10 +1,28 @@
+import pathlib
+
 from openalea.plantgl.all import Color3, Material, Shape, TriangleSet
 
+from openalea.spice.configuration import Configuration
 from openalea.spice.simulator import Simulator
 
+filepath = pathlib.Path(__file__).parent.resolve()
+
+def test_configuration():
+    simulator = Simulator(config_file=filepath / "simulation.ini")
+    assert type(simulator.configuration) == Configuration
+
+    simulator.configuration.read_file(filepath / "simulation_2.ini")
+    assert type(simulator.configuration) == Configuration
+    assert simulator.configuration.KEEP_ALL == 0
+
+    try:
+        conf = Configuration()
+        conf.read_file(filepath / "does not exist.txt")
+    except FileNotFoundError:
+        pass
 
 def test_simple_simulation():
-    simulator = Simulator()
+    simulator = Simulator(config_file=filepath / "simulation.ini")
 
     # setup configuration
     simulator.configuration.nb_photons = 1000000
@@ -53,4 +71,7 @@ def test_simple_simulation():
     )
 
     # run
+    simulator.setup()
     simulator.run()
+
+    simulator.results.writeResults()

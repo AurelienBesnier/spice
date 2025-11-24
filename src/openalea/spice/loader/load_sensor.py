@@ -120,83 +120,85 @@ class Sensor:
             The id of sensor
 
         """
+        def createVirtualDisk(self):
+            """
+            Create geometry of circular sensor
+
+            Returns
+            -------
+            vertices: array
+                The vertices of sensor's geometry
+            normals: array
+                The normal vectors of each vertices in sensor's geometry
+            triangles: array
+                The triangles of sensor's geometry
+
+            """
+            vertices = []
+            normals = []
+            triangles = []
+
+            val = 3.14285 / 180
+            deltaAngle = 10
+            triangleCount = 0
+
+            vertices.append((self.xSite, self.ySite, self.zSite))
+            normals.append((self.xNormal, self.yNormal, self.zNormal))
+
+            if self.zNormal == 1:
+                x1 = self.radius * cos(0)
+                y1 = self.radius * sin(0)
+                z1 = 0
+            else:
+                x1 = self.radius * cos(0)
+                y1 = 0
+                z1 = self.radius * sin(0)
+
+            vertices.append((x1 + self.xSite, y1 + self.ySite, z1 + self.zSite))
+            normals.append((self.xNormal, self.yNormal, self.zNormal))
+
+            i = 0
+            while i < 360:
+                if self.zNormal == 1:
+                    x2 = self.radius * cos((i + deltaAngle) * val)
+                    y2 = self.radius * sin((i + deltaAngle) * val)
+                    z2 = 0
+                else:
+                    x2 = self.radius * cos((i + deltaAngle) * val)
+                    y2 = 0
+                    z2 = self.radius * sin((i + deltaAngle) * val)
+
+                vertices.append((x2 + self.xSite, y2 + self.ySite, z2 + self.zSite))
+                normals.append((self.xNormal, self.yNormal, self.zNormal))
+                triangles.append((triangleCount + 1, triangleCount + 2, 0))
+
+                triangleCount += 1
+                i += deltaAngle
+
+            sensor_shape = Shape(
+                TriangleSet(vertices, triangles, normals),
+                Material(
+                    name="Sensor",
+                    ambient=Color3(0),
+                    specular=Color3(0),
+                    shininess=1,
+                    transparency=0,
+                ),
+            )
+
+            self.shape = sensor_shape
+
         self.xNormal = nor[0]
         self.yNormal = nor[1]
         self.zNormal = nor[2]
         self.radius = r
         self.sensor_id = sensor_id
 
-        self.createVirtualDisk()
+        createVirtualDisk()
 
         return self
 
-    def createVirtualDisk(self):
-        """
-        Create geometry of circular sensor
 
-        Returns
-        -------
-        vertices: array
-            The vertices of sensor's geometry
-        normals: array
-            The normal vectors of each vertices in sensor's geometry
-        triangles: array
-            The triangles of sensor's geometry
-
-        """
-        vertices = []
-        normals = []
-        triangles = []
-
-        val = 3.14285 / 180
-        deltaAngle = 10
-        triangleCount = 0
-
-        vertices.append((self.xSite, self.ySite, self.zSite))
-        normals.append((self.xNormal, self.yNormal, self.zNormal))
-
-        if self.zNormal == 1:
-            x1 = self.radius * cos(0)
-            y1 = self.radius * sin(0)
-            z1 = 0
-        else:
-            x1 = self.radius * cos(0)
-            y1 = 0
-            z1 = self.radius * sin(0)
-
-        vertices.append((x1 + self.xSite, y1 + self.ySite, z1 + self.zSite))
-        normals.append((self.xNormal, self.yNormal, self.zNormal))
-
-        i = 0
-        while i < 360:
-            if self.zNormal == 1:
-                x2 = self.radius * cos((i + deltaAngle) * val)
-                y2 = self.radius * sin((i + deltaAngle) * val)
-                z2 = 0
-            else:
-                x2 = self.radius * cos((i + deltaAngle) * val)
-                y2 = 0
-                z2 = self.radius * sin((i + deltaAngle) * val)
-
-            vertices.append((x2 + self.xSite, y2 + self.ySite, z2 + self.zSite))
-            normals.append((self.xNormal, self.yNormal, self.zNormal))
-            triangles.append((triangleCount + 1, triangleCount + 2, 0))
-
-            triangleCount += 1
-            i += deltaAngle
-
-        sensor_shape = Shape(
-            TriangleSet(vertices, triangles, normals),
-            Material(
-                name="Sensor",
-                ambient=Color3(0),
-                specular=Color3(0),
-                shininess=1,
-                transparency=0,
-            ),
-        )
-
-        self.shape = sensor_shape
 
     def equal(self, xSite, ySite, zSite):
         """
@@ -213,8 +215,7 @@ class Sensor:
 
         Returns
         -------
-            True if equal
-            False if not equal
+            True if equal else False
 
         """
 
@@ -252,7 +253,7 @@ class Sensor:
         specular: float
             The specular
         trans: float
-            The tranparency
+            The transparency
         roughness: float
             The roughness
 

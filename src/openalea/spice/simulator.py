@@ -772,7 +772,7 @@ class Simulator:
                 ph_sc.add(sh)
             ph_sc.merge(self.scene_pgl)
             pgl.Viewer.display(ph_sc)
-
+            return None
         elif mode == "oawidgets":
             from oawidgets.plantgl import PlantGL
             import k3d

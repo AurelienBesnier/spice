@@ -1,9 +1,8 @@
-from datetime import datetime
 import random
-import sys
+from datetime import datetime
 from pathlib import Path
 
-from openalea.spice.libspice_core import *
+from openalea.spice import *
 
 if __name__ == "__main__":
     n_samples = 12
@@ -36,7 +35,8 @@ if __name__ == "__main__":
     print("Creating Scene..")
     scene = Scene()
     scene.loadModel(str(Path.home() / "models/Sponza/sponza.obj"))
-    scene.addPointLight(Vec3(0, -50, 0), 500, Vec3(1, 1, 1))
+    #scene.addPointLight(Vec3(0, -50, 0), 500, Vec3(1, 1, 1))
+    scene.addLight()
     scene.build()
 
     print("Done!")

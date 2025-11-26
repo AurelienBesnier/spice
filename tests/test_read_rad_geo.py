@@ -10,3 +10,6 @@ def test_read_rad():
 
     sc = read_rad(filepath / "assets/testChamber_original.rad", scale_factor=1, invert_normals=False)
     assert sc is not None
+
+    sc = read_rad(filepath / "assets/chambre2.rad", scale_factor=1, invert_normals=False)
+    assert sc is not None

@@ -509,7 +509,7 @@ class Simulator:
                 points_calibration_file,
                 self.configuration.DIVIDED_SPECTRAL_RANGE,
             )
-            self.coeffs_calibration = correct_energy.get_calibaration_coefficient(
+            self.coeffs_calibration = correct_energy.get_calibration_coefficient(
                 self.N_sim_virtual_sensor, self.integrals, self.points_calibration
             )
             return True

@@ -2,7 +2,7 @@ import pathlib
 
 from openalea.spice import Scene
 
-filepath = pathlib.Path(__file__).parent.resolve()
+filepath = pathlib.Path(__file__).parent.resolve() / 'data'
 
 def test_load_scene_with_lights():
     scene = Scene()

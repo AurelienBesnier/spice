@@ -1,11 +1,15 @@
+import pathlib
+
 from openalea.spice import PhotonMapping, Scene, UniformSampler, Vec3
 
+
+filepath = pathlib.Path(__file__).parent.resolve() / 'data'
 
 def test_reflection():
     """Test if photon from a light source all
     end up on an absorbing surface."""
     scene = Scene()
-    scene.loadModel("./tests/testChamberPH.obj")
+    scene.loadModel(str(filepath / "testChamberPH.obj"))
     pos = Vec3(0, 1, 0)
     scene.addPointLight(pos, 400, Vec3(1, 1, 1))
     scene.build()

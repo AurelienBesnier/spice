@@ -1,7 +1,7 @@
 import pathlib
 from openalea.spice.reader.read_rad_geo import read_rad
 
-filepath = pathlib.Path(__file__).parent.resolve()
+filepath = pathlib.Path(__file__).parent.resolve() / 'data'
 
 
 def test_read_rad():

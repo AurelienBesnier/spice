@@ -1,4 +1,5 @@
 import os
+import pathlib
 import random
 import sys
 
@@ -12,10 +13,11 @@ from openalea.spice import (
     Vec3,
 )
 
+filepath = pathlib.Path(__file__).parent.resolve() / 'data'
 
 def test_intersection():
     scene = Scene()
-    scene.loadModel("./tests/cornellbox-water2.obj")
+    scene.loadModel(str(filepath / "cornellbox-water2.obj"))
     scene.build(True)
 
     n_samples = 2

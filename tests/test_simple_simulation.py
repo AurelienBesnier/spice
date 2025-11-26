@@ -5,7 +5,7 @@ from openalea.plantgl.all import Color3, Material, Shape, TriangleSet
 from openalea.spice.configuration import Configuration
 from openalea.spice.simulator import Simulator
 
-filepath = pathlib.Path(__file__).parent.resolve()
+filepath = pathlib.Path(__file__).parent.resolve() / 'data'
 
 def test_configuration():
     simulator = Simulator(config_file=filepath / "simulation.ini")

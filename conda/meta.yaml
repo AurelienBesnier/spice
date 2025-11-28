@@ -52,6 +52,7 @@ test:
     - openalea.spice.simulator
   requires:
     - openalea.plantgl
+    - openalea.lpy
     - pytest
   source_files:
     - tests/**

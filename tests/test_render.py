@@ -1,4 +1,5 @@
 import os
+import pathlib
 import random
 import sys
 
@@ -11,11 +12,13 @@ from openalea.spice import (
     UniformSampler,
     Vec3,
 )
+from openalea.spice.simulator import Simulator
 
+filepath = pathlib.Path(__file__).parent.resolve() / 'data'
 
 def test_intersection():
     scene = Scene()
-    scene.loadModel("./tests/cornellbox-water2.obj")
+    scene.loadModel(str(filepath / "cornellbox-water2.obj"))
     scene.build(True)
 
     n_samples = 2
@@ -69,3 +72,10 @@ def test_intersection():
     intersection_worked = True
     assert intersection_worked
     os.remove("output.ppm")
+
+def test_render():
+    simulator = Simulator(config_file=filepath / "simulation.ini")
+    simulator.configuration.KEEP_ALL = True
+    simulator.configuration.RENDERING = True
+    simulator.setupRender()
+    simulator.run()

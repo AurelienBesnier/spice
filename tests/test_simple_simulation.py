@@ -1,14 +1,36 @@
-from openalea.plantgl.all import Color3, Material, Shape, TriangleSet
+import pathlib
 
+import pytest
+from openalea.plantgl.all import Color3, Material, Shape, TriangleSet
+from openalea.spice import Vec3
+
+from openalea.spice.configuration import Configuration
 from openalea.spice.simulator import Simulator
 
+filepath = pathlib.Path(__file__).parent.resolve() / 'data'
+
+def test_configuration():
+    simulator = Simulator(config_file=filepath / "simulation.ini")
+    assert type(simulator.configuration) == Configuration
+
+    simulator.configuration.read_file(filepath / "simulation_2.ini")
+    assert type(simulator.configuration) == Configuration
+    assert simulator.configuration.KEEP_ALL == 0
+
+    try:
+        conf = Configuration()
+        conf.read_file(filepath / "does not exist.txt")
+    except FileNotFoundError:
+        pass
 
 def test_simple_simulation():
-    simulator = Simulator()
+    simulator = Simulator(config_file=filepath / "simulation.ini")
 
     # setup configuration
     simulator.configuration.nb_photons = 1000000
     simulator.configuration.max_depth = 5
+    simulator.configuration.DIVIDED_SPECTRAL_RANGE = [{"start": 655, "end": 665},
+                                                      {"start": 600, "end": 655}]
     simulator.resetScene()
 
     # setup environment
@@ -51,6 +73,23 @@ def test_simple_simulation():
     simulator.addVirtualSensorToScene(
         shape=sensor_sh, position=(0, 0, 3), scale_factor=1
     )
+    simulator.addFaceSensorsFromLpyFile(str(filepath / 'rose-simple4.lpy'))
+
+    simulator.addPointLight(Vec3(0,5,0), 1000)
 
     # run
+    simulator.setup()
     simulator.run()
+    simulator.calibrateResults(str(filepath / "chambre1_spectrum"),
+                               str(filepath / "point_calibration.csv"))
+
+    simulator.results.writeResults()
+
+@pytest.mark.skip(reason="Segfault with pytest")
+def test_visualization():
+    simulator = Simulator(config_file=filepath / "simulation.ini")
+    simulator.run()
+
+    simulator.visualizeScene()
+    simulator.visualizePhotons()
+    simulator.visualizeRays()

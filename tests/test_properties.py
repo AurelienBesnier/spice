@@ -1,7 +1,7 @@
 import pathlib
 from openalea.spice.reader.read_properties import setup_dataset_materials
 
-filepath = pathlib.Path(__file__).parent.resolve()
+filepath = pathlib.Path(__file__).parent.resolve() / 'data'
 
 
 def test_setup_materials():

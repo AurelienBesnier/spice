@@ -1,9 +1,15 @@
 import pathlib
 from openalea.spice.reader.read_rad_geo import read_rad
 
-filepath = pathlib.Path(__file__).parent.resolve()
+filepath = pathlib.Path(__file__).parent.resolve() / 'data'
 
 
 def test_read_rad():
-    sc = read_rad(filepath / "testChamber.rad", scale_factor=1, invert_normals=False)
+    sc = read_rad(filepath / "assets/testChamber.rad", scale_factor=1, invert_normals=False)
+    assert sc is not None
+
+    sc = read_rad(filepath / "assets/testChamber_original.rad", scale_factor=1, invert_normals=False)
+    assert sc is not None
+
+    sc = read_rad(filepath / "assets/chambre2.rad", scale_factor=1, invert_normals=False)
     assert sc is not None

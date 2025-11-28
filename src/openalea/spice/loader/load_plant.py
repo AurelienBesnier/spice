@@ -23,7 +23,7 @@ from openalea.plantgl.all import (
 # Data is located in this directory: ./assets
 
 
-def add_lpy_file_to_scene(scene, filename, t, tr2shmap, anchor, scale_factor):
+def add_lpy_file_to_scene(scene, filename, t, tr2shmap, anchor, scale_factor=1):
     """
     Adds the lpy mesh to the photonmapping scene.
 

@@ -1,10 +1,14 @@
+import pathlib
+
 from openalea.spice import PhotonMapping, Scene, UniformSampler, Vec3
 
+
+filepath = pathlib.Path(__file__).parent.resolve() / 'data'
 
 def test_photonmaps():
     """Test if every photon maps has at least an element"""
     scene = Scene()
-    scene.loadModel("./tests/testChamberPH.obj")
+    scene.loadModel(str(filepath / "testChamberPH.obj"))
     pos = Vec3(0, 1, 0)
     scene.addPointLight(pos, 400, Vec3(1, 1, 1))
     scene.build(False)

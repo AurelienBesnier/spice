@@ -509,7 +509,7 @@ class Simulator:
                 points_calibration_file,
                 self.configuration.DIVIDED_SPECTRAL_RANGE,
             )
-            self.coeffs_calibration = correct_energy.get_calibaration_coefficient(
+            self.coeffs_calibration = correct_energy.get_calibration_coefficient(
                 self.N_sim_virtual_sensor, self.integrals, self.points_calibration
             )
             return True
@@ -626,6 +626,7 @@ class Simulator:
 
         if mode == "ipython":
             pgl.Viewer.display(self.scene_pgl)
+            return None
         elif mode == "oawidgets":
             from oawidgets.plantgl import PlantGL
             import k3d
@@ -650,6 +651,7 @@ class Simulator:
             return plot
         else:
             pgl.Viewer.display(self.scene_pgl)
+            return None
 
     def get_photons_per_triangles(self):
         """
@@ -770,7 +772,7 @@ class Simulator:
                 ph_sc.add(sh)
             ph_sc.merge(self.scene_pgl)
             pgl.Viewer.display(ph_sc)
-
+            return None
         elif mode == "oawidgets":
             from oawidgets.plantgl import PlantGL
             import k3d
@@ -1143,6 +1145,8 @@ class Simulator:
             The position of the camera.
         lookat: Vec3
             The point where the camera is looking at
+        vfov: float
+            The vertical field of view of the camera
 
         """
         self.configuration.RENDERING = True
@@ -1226,6 +1230,8 @@ class Simulator:
             The position of the camera.
         lookat: Vec3
             The point where the camera is looking at
+        vfov: float
+            The vertical field of view of the camera
 
         Returns
         -------

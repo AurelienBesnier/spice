@@ -17,4 +17,4 @@ dependencies:
   - tsl_robin_map
   - pip
   - pip:
-      - -e ..[doc,notebook]
+      - ..[doc,notebook]

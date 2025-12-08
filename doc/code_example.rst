@@ -58,27 +58,27 @@ Code example
     light_sh = Shape(light_ts, light_mat)
     simulator.addEnvToScene(light_sh)
 
-| To setup the captors (The objects that we do the calculations of light's energy), we have to define its geometry, material and position
+| To setup the sensors (The objects that we do the calculations of light's energy), we have to define its geometry, material and position
 | The optical properties of captor's material are the same as the optical properties of environment's material
-| In this tools, we have 2 type of captors:
-| - ``FaceCaptor``: the material of this captor work like the material of the other surfaces 
-| - ``VirtualCaptor``: the material of this captor has no effect to the light in the simulation
+| In this tools, we have 2 type of sensors:
+| - ``FaceSensor``: the material of this sensor work like the material of the other surfaces
+| - ``VirtualSensor``: the material of this sensor has no effect to the light in the simulation
 
 .. code-block:: python
     
-    #setup captor
-    captor_ts = TriangleSet(pointList = [(0,0,1), (1,0,0), (0,1,0)], indexList = [(0, 1, 2)])
-    captor_mat = Material(
-                            name="Captor",
+    #setup sensor
+    sensor_ts = TriangleSet(pointList = [(0,0,1), (1,0,0), (0,1,0)], indexList = [(0, 1, 2)])
+    sensor_mat = Material(
+                            name="Sensor",
                             ambient = Color3( 127 ),
                             specular = Color3( 127 ), #spec = 0.5 = 127/255
                             shininess = 0.5,
                             transparency = 0.5
                         )
-    captor_sh = Shape(captor_ts, captor_mat, 0)
+    sensor_sh = Shape(sensor_ts, sensor_mat, 0)
 
-    simulator.addFaceCaptorToScene(shape=captor_sh, position=(0,0,3), scale_factor=1)
-    simulator.addVirtualCaptorToScene(shape=captor_sh, position=(0,0,2), scale_factor=1)
+    simulator.addFaceSensorToScene(shape=sensor_sh, position=(0,0,3), scale_factor=1)
+    simulator.addVirtualSensorToScene(shape=sensor_sh, position=(0,0,2), scale_factor=1)
 
 To run the simulation, we use the function ``run`` of the object ``Simulator``. The result of the simulation is saved in an object of type ``SimulationResult``
 
@@ -133,18 +133,18 @@ To run the simulation, we use the function ``run`` of the object ``Simulator``. 
         light_sh = Shape(light_ts, light_mat)
         simulator.addEnvToScene(light_sh)
     
-        #setup captor
-        captor_ts = TriangleSet(pointList = [(0,0,1), (1,0,0), (0,1,0)], indexList = [(0, 1, 2)])
-        captor_mat = Material(
-                            name="Captor",
+        #setup sensor
+        sensor_ts = TriangleSet(pointList = [(0,0,1), (1,0,0), (0,1,0)], indexList = [(0, 1, 2)])
+        sensor_mat = Material(
+                            name="Sensor",
                             ambient = Color3( 127 ),
                             specular = Color3( 127 ), #spec = 0.5 = 127/255
                             shininess = 0.5,
                             transparency = 0.5
                         )
-        captor_sh = Shape(captor_ts, captor_mat, 0)
-        simulator.addFaceCaptorToScene(shape=captor_sh, position=(0,0,3), scale_factor=1)
-        simulator.addVirtualCaptorToScene(shape=captor_sh, position=(0,0,2), scale_factor=1)
+        sensor_sh = Shape(sensor_ts, sensor_mat, 0)
+        simulator.addFaceSensorToScene(shape=sensor_sh, position=(0,0,3), scale_factor=1)
+        simulator.addVirtualSensorToScene(shape=sensor_sh, position=(0,0,2), scale_factor=1)
     
         #run
         simulator.run()

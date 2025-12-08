@@ -88,7 +88,10 @@ sdist.exclude = ["*.pyc", "*.pyo"]
 logging.level = "WARNING"
 build.verbose = true
 experimental = true
-editable.rebuild = true
+
+[tool.scikit-build.editable]
+rebuild = true
+verbose = true
 
 [tool.scikit-build.cmake]
 build-type="Release"

@@ -20,7 +20,13 @@ To install as a Python library:
 
 .. code-block:: bash
     
-    pip install ./
+    pip install .
+
+To install in editable mode you need to add the `--no-build-isolation` option else it will fail.
+
+.. code-block:: bash
+
+    pip install -e . --no-build-isolation
 
 To run test
 ===========

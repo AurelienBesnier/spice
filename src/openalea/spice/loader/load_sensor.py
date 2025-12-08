@@ -194,7 +194,7 @@ class Sensor:
         self.radius = r
         self.sensor_id = sensor_id
 
-        createVirtualDisk()
+        createVirtualDisk(self)
 
         return self
 

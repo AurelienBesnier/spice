@@ -907,12 +907,12 @@ class Scene
 
                 // set indices
                 uint32_t* ib =
-                  (uint32_t*)rtcSetNewGeometryBuffer(geom,
-                                                     RTC_BUFFER_TYPE_INDEX,
-                                                     0,
-                                                     RTC_FORMAT_UINT3,
-                                                     3 * sizeof(uint32_t),
-                                                     nFaces());
+                  static_cast<uint32_t *>(rtcSetNewGeometryBuffer(geom,
+                                                                  RTC_BUFFER_TYPE_INDEX,
+                                                                  0,
+                                                                  RTC_FORMAT_UINT3,
+                                                                  3 * sizeof(uint32_t),
+                                                                  nFaces()));
                 for (size_t i = 0; i < indices.size(); ++i) {
                         ib[i] = indices[i];
                 }

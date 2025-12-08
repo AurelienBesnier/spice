@@ -1217,6 +1217,7 @@ class Simulator:
         for sh in lscene:
             sh.apply(tr)
             mesh = pgl.Shape(tr.result, sh.appearance, sh.id)
+            self.scene_pgl.add(mesh)
             self.addFaceSensorToScene(mesh, position, scale_factor)
 
     @staticmethod

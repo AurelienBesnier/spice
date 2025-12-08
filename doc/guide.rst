@@ -45,6 +45,17 @@ Configuration file
 |                        |               | | continue right after. These bands have to be smaller               |
 |                        |               | | than the base spectral range. Ex: 2 100 150 150 200                |
 +------------------------+---------------+----------------------------------------------------------------------+
+| RENDERING              | 0/1           | | 1 for rendering an image after computation 0 for no image (faster) |
++------------------------+---------------+----------------------------------------------------------------------+
+| KEEP_ALL               | 0/1           | | Whether or not to keep all the photons shot in a simulation. Can   |
+|                        |               | | be useful to visualise what happened but very memory intensive.    |
+|                        |               | | Use with caution                                                   |
++------------------------+---------------+----------------------------------------------------------------------+
+| $ENVIRONMENT_FILE      | string        | | The filepath of the environment to be loaded. Should be a rad file.|
++------------------------+---------------+----------------------------------------------------------------------+
+| $OPTICAL_PROPERTIES_DIR| string        | | The path of the directory containing the optical properties        |
+|                        |               | | of the objects.                                                    |
++------------------------+---------------+----------------------------------------------------------------------+
 
 | This is an example of defining a configuration file.
 
@@ -285,13 +296,12 @@ Create a python file (main.py) which contains the core program
 
 .. code-block:: python
 
-    from openalea.spice.simulator import *
+    from openalea.spice.simulator import Simulator
 
     if __name__ == "__main__":
 
         simulator = Simulator(config_file="simulation.ini")
-        simulator.addEnvFromFile("testChamber.rad", "./PO")
-        simulator.addVirtualDiskCaptorsFromFile("captors_expe1.csv")
+        simulator.addVirtualDiskSensorsFromFile("sensors_expe1.csv")
         simulator.run()
         simulator.results.writeResults() #write results to a file
 
@@ -342,13 +352,12 @@ To visualize the room, after defining the input files, we use a function named `
 
 .. code-block:: python
 
-    from openalea.spice.simulator import *
+    from openalea.spice.simulator import Simulator
 
     if __name__ == "__main__":
 
         simulator = Simulator(config_file="simulation.ini")
-        simulator.addEnvFromFile("testChamber.rad", "./PO")
-        simulator.addVirtualDiskCaptorsFromFile("captors_expe1.csv")
+        simulator.addVirtualDiskSensorsFromFile("sensors_expe1.csv")
         simulator.visualizeScene("ipython")
 
 To obtain the 3D scene, we have to run this program through ``ipython`` or if in a notebook we use ``oawidgets``.
@@ -385,13 +394,12 @@ Test value Tmin
 
 .. code-block:: python
 
-    from openalea.spice.simulator import *
+    from openalea.spice.simulator import Simulator
 
     if __name__ == "__main__":
 
         simulator = Simulator(config_file="simulation.ini")
-        simulator.addEnvFromFile("testChamber.rad", "./PO")
-        simulator.addVirtualDiskCaptorsFromFile("captors_expe1.csv")        
+        simulator.addVirtualDiskSensorsFromFile("sensors_expe1.csv")
         simulator.test_t_min(int(1e6), 1e-6, 10, True)
 
 | Here is a example of result

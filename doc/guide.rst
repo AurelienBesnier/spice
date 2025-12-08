@@ -147,7 +147,7 @@ The files containing the optical properties are saved in this structure of folde
 
 | The folder Env contains the files .csv which define the average reflection and average transmission for each wavelength of the environment's objects. 
 | These objects are rarely changing during the process of experiment. 
-| Whereas, the files .csv inside the folder Plant is using to define these optical properties of captor/plant. 
+| Whereas, the files .csv inside the folder Plant is using to define these optical properties of sensor/plant.
 | The amount of received energies is calculated on these objects. 
 | It is important to notice that the name of the .csv files is the same as the name of material which is defined in the room file (.rad)
 |
@@ -165,10 +165,10 @@ The files containing the optical properties are saved in this structure of folde
 | ...        | ...        |
 +------------+------------+
 
-Captor file
+Sensor file
 -----------
 
-| In our tool, we have a csv file defining the position and orientation of each captor. 
+| In our tool, we have a csv file defining the position and orientation of each sensor.
 | It goes as follows:
 
 +-------+-------+-------+----------------+--------+--------+--------+
@@ -211,7 +211,7 @@ Spectral heterogeneity file
 Calibration points file  
 -----------------------
 
-| The calibration points file contains the captors which is used to convert the results from a number of photons to irradiance. This function only work for the simulation with captors.
+| The calibration points file contains the sensors which is used to convert the results from a number of photons to irradiance. This function only work for the simulation with sensors.
 |
 | This is an example of this file
 
@@ -267,7 +267,7 @@ Create a room file (testChamber.rad) with only one light
     743.193 1670.0 2105.0
     0.1
 
-Create a captor file (captors_expe1.csv) with only one captor
+Create a sensor file (captors_expe1.csv) with only one sensor
 
 .. code-block:: bash
 
@@ -318,7 +318,7 @@ Run and results
 Calibrate the results
 ---------------------
 
-| After running the simulation, we will obtain a result with the number of photons received on each captors or organs of plant. But in reality, to using this result to do the further researches, we have to convert the unit of the current result to a unit which is more physical.
+| After running the simulation, we will obtain a result with the number of photons received on each sensors or organs of plant. But in reality, to using this result to do the further researches, we have to convert the unit of the current result to a unit which is more physical.
 |
 | To do that, after finishing the simulation, we will do the calibration the result by using the function ``calibrateResults``.
 
@@ -331,9 +331,9 @@ Calibrate the results
 |
 | In our tool, for each simulation of each spectral range, we will always run the same simulation of photon mapping. So the result final isn't include the factor of spectral heterogeneity. That is why we need the spectral heterogeneity file to correct the final results of simulation before doing the calculations before that.
 |
-| After correcting the factor of heterogeneity, we will calibrate the result by using the calibration point file. This file contains the received energies measured in reality on the positions of some captors which is used in the simulation. With these values, we will use the method ``Linear Regression`` to calculate the coefficients to convert the results of simulation to irradiance (a unit used to measure the power of energy).
+| After correcting the factor of heterogeneity, we will calibrate the result by using the calibration point file. This file contains the received energies measured in reality on the positions of some sensors which is used in the simulation. With these values, we will use the method ``Linear Regression`` to calculate the coefficients to convert the results of simulation to irradiance (a unit used to measure the power of energy).
 |
-| This function is only working with the simulation of captors. 
+| This function is only working with the simulation of sensors.
 
 Visualize the room
 ------------------

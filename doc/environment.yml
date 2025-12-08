@@ -14,6 +14,7 @@ dependencies:
   - tbb
   - tbb-devel
   - llvm-openmp
+  - tsl_robin_map
   - pip
   - pip:
       - -e ..[doc,notebook]

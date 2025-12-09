@@ -32,10 +32,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/openalea-incubator/spice"
-"Bug Tracker" = "https://github.com/openalea-incubator/spice/issues"
-Discussions = "https://github.com/openalea-incubator/spice/discussions"
-Changelog = "https://github.com/openalea-incubator/spice/releases"
+Homepage = "https://github.com/openalea/spice"
+"Bug Tracker" = "https://github.com/openalea/spice/issues"
+Discussions = "https://github.com/openalea/spice/discussions"
+Changelog = "https://github.com/openalea/spice/releases"
 
 [project.optional-dependencies]
 pybind=["pybind11"]

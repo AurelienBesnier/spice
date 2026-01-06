@@ -628,7 +628,7 @@ class Simulator:
             pgl.Viewer.display(self.scene_pgl)
             return None
         elif mode == "oawidgets":
-            from oawidgets.plantgl import PlantGL
+            from openalea.widgets.plantgl import PlantGL
             import k3d
 
             plot = PlantGL(self.scene_pgl, side="double")
@@ -688,7 +688,7 @@ class Simulator:
                 light_id = phmap.getIthPhoton(i).lightId
                 photons.append(((photon[0], photon[1], photon[2]), light_id))
         if mode == "oawidgets":
-            from oawidgets.plantgl import PlantGL
+            from openalea.widgets.plantgl import PlantGL
             import k3d
             from k3d.colormaps import matplotlib_color_maps
 
@@ -774,7 +774,7 @@ class Simulator:
             pgl.Viewer.display(ph_sc)
             return None
         elif mode == "oawidgets":
-            from oawidgets.plantgl import PlantGL
+            from openalea.widgets.plantgl import PlantGL
             import k3d
             from k3d.colormaps import matplotlib_color_maps
 
@@ -832,7 +832,7 @@ class Simulator:
             pgl.Viewer.display(self.scene_pgl)
 
         elif mode == "oawidgets":
-            from oawidgets.plantgl import PlantGL
+            from openalea.widgets.plantgl import PlantGL
 
             plot = PlantGL(self.scene_pgl, side="double")
             plot.camera_reset()

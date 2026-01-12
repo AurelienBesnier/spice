@@ -1,0 +1,189 @@
+name: Openalea CI main workflow
+
+on:
+  workflow_call:
+    inputs:
+      conda-directory:
+        description: 'Directory containing the conda recipe. Default is "conda".'
+        default: "conda"
+        required: false
+        type: string
+
+      python-minor-version:
+        description: 'List of python minor versions covered by CI. Leave empty to auto-fetch from conda-forge.'
+        default: ""
+        required: false
+        type: string
+
+      operating-system:
+        description: 'List of OS covered by CI.'
+        default: '["ubuntu-latest", "macos-latest", "macos-15-intel", "windows-latest"]'
+        required: false
+        type: string
+
+      organisation:
+        description: 'Channel of the organisation hosting the publications'
+        default: 'https://conda.anaconda.org/openalea3'
+        required: false
+        type: string
+
+      dev-label:
+        description: 'The label used for publishing development versions (latest version of master/main branch)'
+        default: 'dev'
+        required: false
+        type: string
+
+      rc-label:
+        description: 'The label used for publishing release candidates versions (latest v* tag)'
+        default: 'rc'
+        required: false
+        type: string
+
+      force-channel-priority:
+        description: 'Force channels priority used for build (coma separated format), regardless of context. If false (default), priority list is computed by action depending on context'
+        default: 'false'
+        required: false
+        type: string
+
+      force-full-matrix:
+        description: 'Force build on full os x py matrix.'
+        default: false
+        required: false
+        type: boolean
+
+      force-no-publication:
+        description: 'Prevent publication (forbid ci to publish anything on anaconda)'
+        default: false
+        required: false
+        type: boolean
+
+      force-no-clean:
+        description: 'Prevent cleaning (forbid action to clean anything on anaconda)'
+        default: false
+        required: false
+        type: boolean
+
+      force-ubuntu-only:
+        description: 'Force build on ubuntu only'
+        default: false
+        required: false
+        type: boolean
+
+      build-options:
+        description: 'Build options for conda build.'
+        required: false
+        default: ''
+        type: string
+
+      force-ref:
+        description: 'If defined, override actual calling ref (eg refs/heads/main)'
+        required: false
+        type: string
+
+      force-event:
+        description: 'If defined, override actual calling event (eg push, pull-request...)'
+        required: false
+        type: string
+
+    secrets:
+      anaconda_token:
+        description: 'Anaconda access token (required).'
+        required: true
+
+jobs:
+  setup-ci:
+    name: Setup CI
+    runs-on: ubuntu-latest
+    outputs:
+      py_latest: ${{ steps.set.outputs.py_latest }}
+      build_os: ${{ steps.set.outputs.build_os }}
+      build_py: ${{ steps.set.outputs.build_py }}
+      channels: ${{ steps.set.outputs.channels }}
+      upload_artifact: ${{ steps.set.outputs.upload_artifact }}
+      publish: ${{ steps.set.outputs.publish }}
+      publish_if_py: ${{ steps.set.outputs.publish_if_py }}
+      publish_if_os: ${{ steps.set.outputs.publish_if_os }}
+      publish_to: ${{ steps.set.outputs.publish_to }}
+      version: ${{ steps.set.outputs.version }}
+      clean: ${{ steps.set.outputs.clean }}
+      clean-package: ${{ steps.set.outputs.clean-package }}
+      clean-label: ${{ steps.set.outputs.clean-label }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set calling context
+        id: setcontext
+        run: |
+          echo "git-ref=${{ inputs.force-ref || github.ref }}" >> $GITHUB_OUTPUT
+          echo "git-event=${{ inputs.force-event || github.event_name }}" >> $GITHUB_OUTPUT
+
+      - name: Call Setup-CI action
+        id: set
+        # Uncomment the next line to run the local version of the action for testing
+        # uses: ./actions/setup-ci
+        uses: openalea/action-build-publish-anaconda/actions/setup-ci@main
+        with:
+          git-ref: ${{ steps.setcontext.outputs.git-ref }}
+          git-event: ${{ steps.setcontext.outputs.git-event }}
+          conda-directory: ${{ inputs.conda-directory }}
+          python-minor-version: ${{ inputs.python-minor-version }}
+          operating-system: ${{ inputs.operating-system }}
+          organisation: ${{ inputs.organisation }}
+          dev-label: ${{ inputs.dev-label }}
+          rc-label: ${{ inputs.rc-label }}
+          force-ubuntu-only: ${{ inputs.force-ubuntu-only }}
+          force-channel-priority: ${{ inputs.force-channel-priority }}
+          force-full-matrix: ${{ inputs.force-full-matrix }}
+          force-no-publication: ${{ inputs.force-no-publication }}
+          force-no-clean: ${{ inputs.force-no-clean }}
+
+  build-and-publish:
+    name: ${{ matrix.os }}, Python 3.${{ matrix.python-minor-version }} for conda deployment
+    runs-on: ${{ matrix.os }}
+    needs: setup-ci
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.setup-ci.outputs.build_os) }}
+        python-minor-version: ${{ fromJson(needs.setup-ci.outputs.build_py) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and Publish
+        # Uncomment the next line to run the local version of the action for testing
+        # uses: ./actions/build_and_publish
+        uses: openalea/action-build-publish-anaconda/actions/build_and_publish@main
+        env:
+          SETUPTOOLS_SCM_PRETEND_VERSION: ${{ needs.setup-ci.outputs.version }}
+        with:
+          os_name: ${{ matrix.os }}
+          condapython: ${{ needs.setup-ci.outputs.py_latest }}
+          conda: ${{ inputs.conda-directory }}
+          python: ${{ matrix.python-minor-version }}
+          channels: ${{ needs.setup-ci.outputs.channels }}
+          token: ${{ secrets.anaconda_token }}
+          upload_artifact: ${{ needs.setup-ci.outputs.upload_artifact }}
+          publish: ${{ needs.setup-ci.outputs.publish }}
+          publish_if_py: ${{ needs.setup-ci.outputs.publish_if_py }}
+          publish_if_os: ${{ needs.setup-ci.outputs.publish_if_os }}
+          label: ${{ needs.setup-ci.outputs.publish_to }}
+          build-options: ${{ inputs.build_options }}
+  clean-channel:
+    name: Clean channel
+    runs-on: ubuntu-latest
+    needs: [setup-ci, build-and-publish]
+    if: ${{ needs.setup-ci.outputs.clean == 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Clean-up Channel
+        # Uncomment the next line to run the local version of the action for testing
+        # uses: ./actions/cleanup-label
+        uses: openalea/action-build-publish-anaconda/actions/cleanup-label@main
+        with:
+          anaconda_token: ${{ secrets.anaconda_token }}
+          target-package: ${{ needs.setup-ci.outputs.clean-package }}
+          target-label: ${{ needs.setup-ci.outputs.clean-label }}
+          latest-version: ${{ needs.setup-ci.outputs.version }}

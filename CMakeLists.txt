@@ -15,6 +15,11 @@ if(NOT OpenMP_CXX_FOUND)
     message(WARNING "failed to find OpenMP")
 endif()
 
+# apple newer C++ features with old SDK
+if(APPLE)
+    set(CMAKE_CXX_FLAGS "${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY")
+endif()
+
 # Embree4
 find_package(embree 4.0 REQUIRED)
 if (${embree_FOUND})
@@ -24,17 +29,6 @@ else()
   message(FATAL_ERROR "Could not find Embree")
 endif()
 
-# OpenMP
-if(APPLE)
-    set(CMAKE_CXX_COMPILER clang++)
-    set(CMAKE_CXX_FLAGS "${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY")
-
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang\$")
-        set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp")
-        set(OpenMP_CXX_LIB_NAMES "omp")
-        set(OpenMP_omp_LIBRARY omp)
-    endif()
-endif()
 
 # externals
 add_subdirectory("externals")

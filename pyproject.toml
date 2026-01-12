@@ -69,7 +69,8 @@ dependencies = [
     "nanobind",
     "cmake",
     "embree",
-    "llvm-openmp",
+    "openmp",
+    "libgomp",
     "tbb",
     "tbb-devel"
 ]

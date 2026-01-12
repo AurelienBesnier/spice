@@ -15,6 +15,11 @@ if(NOT OpenMP_CXX_FOUND)
     message(WARNING "failed to find OpenMP")
 endif()
 
+# apple newer C++ features with old SDK
+if(APPLE)
+    set(CMAKE_CXX_FLAGS "${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY")
+endif()
+
 # Embree4
 find_package(embree 4.0 REQUIRED)
 if (${embree_FOUND})

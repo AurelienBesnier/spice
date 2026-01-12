@@ -31,8 +31,10 @@ if(APPLE)
 
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang\$")
         set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp")
-        set(OpenMP_CXX_LIB_NAMES "omp")
-        set(OpenMP_omp_LIBRARY omp)
+        set(OpenMP_CXX_LIB_NAMES "omp" "libomp" "libgomp")
+        set(OpenMP_omp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+        set(OpenMP_libomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+        set(OpenMP_libgomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
     endif()
 endif()
 

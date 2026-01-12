@@ -24,17 +24,6 @@ else()
   message(FATAL_ERROR "Could not find Embree")
 endif()
 
-# OpenMP
-if(APPLE)
-    set(CMAKE_CXX_COMPILER clang++)
-    set(CMAKE_CXX_FLAGS "${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY")
-
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang\$")
-        set(OpenMP_CXX_FLAGS "-fopenmp")
-        set(OpenMP_CXX_LIB_NAMES "omp")
-        set(OpenMP_omp_LIBRARY omp)
-    endif()
-endif()
 
 # externals
 add_subdirectory("externals")

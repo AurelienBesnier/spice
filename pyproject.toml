@@ -21,6 +21,7 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Topic :: Scientific/Engineering",
 ]
+license = "CECILL-C"
 license-files = ["LICEN[CS]E*", "src/cpp/LICENSE"]
 # version = "1.0.2"
 readme = "README.md"

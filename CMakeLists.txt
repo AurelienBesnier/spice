@@ -47,13 +47,7 @@ set_target_properties(pm
         )
 
 
-target_link_libraries(pm INTERFACE OpenMP::OpenMP_CXX tinyobjloader embree Threads::Threads)
-target_link_libraries(pm INTERFACE photon_map primitive triangle image)
-
-# examples
-if(BUILD_CXX_EXAMPLE)
-    add_subdirectory("examples")
-endif ()
+target_link_libraries(pm INTERFACE TBB::tbb OpenMP::OpenMP_CXX tinyobjloader embree Threads::Threads photon_map primitive triangle image)
 
 # wrapper
 add_subdirectory("src/python/")
@@ -62,6 +56,11 @@ add_subdirectory("src/python/")
 if(BUILD_TESTS)
     add_subdirectory("src/cpp/test")
 endif()
+
+# examples
+if(BUILD_CXX_EXAMPLE)
+    add_subdirectory("examples")
+endif ()
 
 # building lib
 find_package(Python COMPONENTS Interpreter Development REQUIRED)

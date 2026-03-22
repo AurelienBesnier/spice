@@ -4,7 +4,7 @@ from openalea.spice.simulator import Simulator
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 
-    parser.add_argument('-c', '--config', type=str, help="The configuration file for the simulation.")
+    parser.add_argument('-c', '--config', type=str, default="", help="The configuration file for the simulation.")
     args = parser.parse_args()
 
     sim = Simulator(args.config)

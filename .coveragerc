@@ -13,5 +13,6 @@ directory = build/htmlcov
 [run]
 source = openalea.spice
 omit =
+        *__main__*
         *__init__*
         *test*

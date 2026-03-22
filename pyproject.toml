@@ -23,7 +23,6 @@ classifiers = [
 ]
 license = "CECILL-C"
 license-files = ["LICEN[CS]E*", "src/cpp/LICENSE"]
-# version = "1.0.2"
 readme = "README.md"
 dynamic = ["version"]
 dependencies = [
@@ -31,6 +30,9 @@ dependencies = [
   "scipy",
   "openpyxl",
 ]
+
+[project.scripts]
+spice = "openalea.spice.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/openalea/spice"

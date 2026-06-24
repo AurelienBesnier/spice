@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(photon_mapping LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
 
 option(BUILD_TESTS "build c++ tests" OFF)
 option(BUILD_CXX_EXAMPLE "build c++ example" OFF)
@@ -41,7 +41,7 @@ add_library(pm INTERFACE src/python/ext_photonmapping_nano.cpp)
 
 set_target_properties(pm
         PROPERTIES
-        CXX_STANDARD 23
+        CXX_STANDARD 26
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS YES
         )

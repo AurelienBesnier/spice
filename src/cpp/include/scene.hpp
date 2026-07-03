@@ -932,6 +932,47 @@ class Scene
                 rtcCommitScene(scene);
         }
 
+        void build_hiprt(hiprtContext context)
+        {
+            std::cout << "[Scene] Building AMD HIP RT scene..." << std::endl;
+
+            float* d_vertices;
+            uint32_t* d_indices;
+            hipMalloc(&d_vertices, vertices.size() * sizeof(float));
+            hipMalloc(&d_indices, indices.size() * sizeof(uint32_t));
+            hipMemcpy(d_vertices, vertices.data(), vertices.size() * sizeof(float), hipMemcpyHostToDevice);
+            hipMemcpy(d_indices, indices.data(), indices.size() * sizeof(uint32_t), hipMemcpyHostToDevice);
+
+            hiprtTriangleMeshPrimitive meshGeom = {};
+            meshGeom.vertices = d_vertices;
+            meshGeom.vertexCount = nVertices();
+            meshGeom.vertexStride = 3 * sizeof(float);
+            meshGeom.triangleIndices = d_indices;
+            meshGeom.triangleCount = nFaces();
+            meshGeom.triangleStride = 3 * sizeof(uint32_t);
+
+            hiprtGeometryBuildInput input = {};
+            input.type = hiprtGeometryTypeTriangleMesh;
+            input.primitive.triangleMesh = meshGeom;
+
+            hiprtBuildOptions options = {};
+            options.buildFlags = hiprtBuildFlagHintFastTrace;
+
+            hiprtGeometry geometry;
+            hiprtCreateGeometry(context, &input, &options, &geometry);
+
+            size_t scratchSize;
+            hiprtGetGeometryBuildTemporaryBufferSize(context, &input, &options, &scratchSize);
+            
+            void* d_scratch;
+            hipMalloc(&d_scratch, scratchSize);
+
+            hiprtBuildGeometry(context, hiprtBuildOperationBuild, &input, &options, d_scratch, nullptr, geometry);
+
+            hipFree(d_scratch);
+            
+        }
+
         /**
          * @fn bool intersect(const Ray &ray, IntersectInfo &info) const
          * @brief Gets the intersection information of a ray in the scene.

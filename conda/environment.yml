@@ -6,6 +6,7 @@ dependencies:
   - openalea.lpy
   - openalea.plantgl
   - openalea.widgets
+  - tinyobjloader
   - embree
   - make
   - cxx-compiler

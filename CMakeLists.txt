@@ -30,8 +30,8 @@ else()
 endif()
 
 
-# externals
-add_subdirectory("externals")
+# find tinyobjloader
+find_package(tinyobjloader CONFIG REQUIRED)
 
 add_subdirectory("src/cpp/include")
 

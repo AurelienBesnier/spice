@@ -3,7 +3,7 @@ project(photon_mapping LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 26)
 
-option(BUILD_TESTS "build c++ tests" ON)
+option(BUILD_TESTS "build c++ tests" OFF)
 option(BUILD_CXX_EXAMPLE "build c++ example" OFF)
 
 # --- Build setup

@@ -31,8 +31,14 @@ else()
   message(FATAL_ERROR "Could not find Embree")
 endif()
 
-# find tinyobjloader
+# find tinyobjloader & tinygltf
 find_package(tinyobjloader CONFIG REQUIRED)
+
+add_library(TinyGLTF::TinyGLTF INTERFACE IMPORTED)
+
+if(DEFINED ENV{CONDA_PREFIX})
+    target_include_directories(TinyGLTF::TinyGLTF INTERFACE $ENV{CONDA_PREFIX}/include)
+endif()
 
 if(HIP)
     find_package(hiprt CONFIG REQUIRED)

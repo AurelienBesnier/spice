@@ -12,6 +12,7 @@
 #include <cassert>
 
 #include <tiny_obj_loader.h>
+#include <tiny_gltf.h>
 #include "core.hpp"
 #include "primitive.hpp"
 
@@ -853,6 +854,189 @@ class Scene
                                                 this->bxdfs[faceID],
                                                 sh_name,
                                                 light);
+                }
+        }
+
+        const unsigned char* getBufferData(const tinygltf::Model& model, int accessorIdx, size_t& byteStride, size_t& count) {
+                if (accessorIdx < 0) return nullptr;
+                const auto& accessor = model.accessors[accessorIdx];
+                const auto& bufferView = model.bufferViews[accessor.bufferView];
+                const auto& buffer = model.buffers[bufferView.buffer];
+                
+                count = accessor.count;
+                byteStride = accessor.ByteStride(bufferView);
+                return &(buffer.data[accessor.byteOffset + bufferView.byteOffset]);
+        }
+
+        void loadModelGLTF(const std::string& filename)
+        {
+                std::filesystem::path filepath(filename);
+                clear();
+
+                tinygltf::Model model;
+                tinygltf::TinyGLTF loader;
+                std::string err;
+                std::string warn;
+
+                bool ret = false;
+                if (filepath.extension() == ".glb") {
+                        ret = loader.LoadBinaryFromFile(&model, &err, &warn, filepath.string());
+                } else {
+                        ret = loader.LoadASCIIFromFile(&model, &err, &warn, filepath.string());
+                }
+
+                if (!warn.empty()) std::cout << "[Scene] " << warn << std::endl;
+                if (!ret) {
+                        if (!err.empty()) std::cout << "[Scene] failed to load " << filepath.string() << ": " << err << std::endl;
+                        return;
+                }
+
+                // map glTF materials to tinyobj::material_t
+                std::vector<tinyobj::material_t> convertedMaterials;
+                for (const auto& gtMat : model.materials) {
+                        tinyobj::material_t m;
+                        m.name = gtMat.name;
+                        
+                        m.diffuse[0] = static_cast<float>(gtMat.pbrMetallicRoughness.baseColorFactor[0]);
+                        m.diffuse[1] = static_cast<float>(gtMat.pbrMetallicRoughness.baseColorFactor[1]);
+                        m.diffuse[2] = static_cast<float>(gtMat.pbrMetallicRoughness.baseColorFactor[2]);
+                        
+                        m.dissolve = static_cast<float>(gtMat.pbrMetallicRoughness.baseColorFactor[3]);
+
+                        m.emission[0] = static_cast<float>(gtMat.emissiveFactor[0]);
+                        m.emission[1] = static_cast<float>(gtMat.emissiveFactor[1]);
+                        m.emission[2] = static_cast<float>(gtMat.emissiveFactor[2]);
+
+                        m.roughness = static_cast<float>(gtMat.pbrMetallicRoughness.roughnessFactor);
+                        m.metallic = static_cast<float>(gtMat.pbrMetallicRoughness.metallicFactor);
+
+                        convertedMaterials.push_back(m);
+                }
+
+                for (const auto& mesh : model.meshes) {
+                        for (const auto& primitive : mesh.primitives) {
+                        // only triangles
+                        if (primitive.mode != TINYGLTF_MODE_TRIANGLES) continue;
+
+                        // get positions
+                        size_t posStride = 0, posCount = 0;
+                        auto posIt = primitive.attributes.find("POSITION");
+                        if (posIt == primitive.attributes.end()) continue;
+                        const unsigned char* posBuffer = getBufferData(model, posIt->second, posStride, posCount);
+                        
+                        // get normals (optional)
+                        size_t normStride = 0, normCount = 0;
+                        auto normIt = primitive.attributes.find("NORMAL");
+                        const unsigned char* normBuffer = (normIt != primitive.attributes.end()) ? 
+                                getBufferData(model, normIt->second, normStride, normCount) : nullptr;
+
+                        // get indices
+                        std::vector<uint32_t> primitiveIndices;
+                        if (primitive.indices >= 0) {
+                                const auto& indexAccessor = model.accessors[primitive.indices];
+                                size_t idxStride = 0, idxCount = 0;
+                                const unsigned char* idxBuffer = getBufferData(model, primitive.indices, idxStride, idxCount);
+                                
+                                for (size_t i = 0; i < idxCount; ++i) {
+                                uint32_t idx = 0;
+                                if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT) {
+                                        idx = *reinterpret_cast<const uint32_t*>(idxBuffer + i * idxStride);
+                                } else if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
+                                        idx = *reinterpret_cast<const uint16_t*>(idxBuffer + i * idxStride);
+                                } else if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE) {
+                                        idx = *reinterpret_cast<const uint8_t*>(idxBuffer + i * idxStride);
+                                }
+                                primitiveIndices.push_back(idx);
+                                }
+                        } else {
+                                // Unindexed primitives: generate sequential indices
+                                for (uint32_t i = 0; i < posCount; ++i) primitiveIndices.push_back(i);
+                        }
+
+                        for (size_t f = 0; f < primitiveIndices.size(); f += 3) {
+                                std::vector<Vec3f> faceVertices;
+                                std::vector<Vec3f> faceNormals;
+
+                                for (size_t v = 0; v < 3; ++v) {
+                                uint32_t idx = primitiveIndices[f + v];
+
+                                // read position
+                                const float* pPtr = reinterpret_cast<const float*>(posBuffer + idx * posStride);
+                                faceVertices.push_back(Vec3f(pPtr[0], pPtr[1], pPtr[2]));
+
+                                // read normal if it exists
+                                if (normBuffer) {
+                                        const float* nPtr = reinterpret_cast<const float*>(normBuffer + idx * normStride);
+                                        faceNormals.push_back(Vec3f(nPtr[0], nPtr[1], nPtr[2]));
+                                }
+                                }
+
+                                if (faceNormals.empty()) {
+                                Vec3f v1 = normalize(faceVertices[1] - faceVertices[0]);
+                                Vec3f v2 = normalize(faceVertices[2] - faceVertices[0]);
+                                Vec3f n = normalize(cross(v1, v2));
+                                faceNormals.push_back(n);
+                                faceNormals.push_back(n);
+                                faceNormals.push_back(n);
+                                }
+
+                                for (int i = 0; i < 3; ++i) {
+                                this->vertices.push_back(faceVertices[i][0]);
+                                this->vertices.push_back(faceVertices[i][1]);
+                                this->vertices.push_back(faceVertices[i][2]);
+
+                                this->normals.push_back(faceNormals[i][0]);
+                                this->normals.push_back(faceNormals[i][1]);
+                                this->normals.push_back(faceNormals[i][2]);
+
+                                this->indices.push_back(this->indices.size());
+                                }
+
+                                // map primitive material
+                                std::optional<tinyobj::material_t> material = std::nullopt;
+                                if (primitive.material >= 0 && primitive.material < convertedMaterials.size()) {
+                                material = convertedMaterials[primitive.material];
+                                }
+                                this->materials.push_back(material);
+                        }
+                        }
+                }
+
+                // populate  triangles
+                for (size_t faceID = 0; faceID < nFaces(); ++faceID) {
+                        this->triangles.emplace_back(vertices.data(), indices.data(), normals.data(), faceID);
+                }
+
+                // populate bxdfs
+                for (size_t faceID = 0; faceID < nFaces(); ++faceID) {
+                        const auto material = this->materials[faceID];
+                        if (material) {
+                        tinyobj::material_t m = material.value();
+                        if (m.dissolve != 1.0f && m.dissolve != 0.0f) // tinygltf sets alpha to 1.0 by default
+                                this->bxdfs.push_back(createBxDF(m, m.dissolve, 1.0f - m.dissolve, 0.5f));
+                        else
+                                this->bxdfs.push_back(createBxDF(m));
+                        } else {
+                        this->bxdfs.push_back(createDefaultBxDF());
+                        }
+                }
+
+                // populate lights, primitives
+                for (size_t faceID = 0; faceID < nFaces(); ++faceID) {
+                        std::shared_ptr<Light> light = nullptr;
+                        const auto material = this->materials[faceID];
+                        std::string sh_name = "";
+                        
+                        if (material) {
+                        tinyobj::material_t m = material.value();
+                        sh_name = m.name;
+                        light = createAreaLight(m, &this->triangles[faceID]);
+                        if (light != nullptr) {
+                                lights.push_back(light);
+                        }
+                        }
+
+                        primitives.emplace_back(&this->triangles[faceID], this->bxdfs[faceID], sh_name, light);
                 }
         }
 

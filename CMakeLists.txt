@@ -32,12 +32,13 @@ else()
 endif()
 
 # find tinyobjloader & tinygltf
-find_package(tinyobjloader CONFIG REQUIRED)
+add_library(tinyobjloader::tinyobjloader INTERFACE IMPORTED)
 
 add_library(TinyGLTF::TinyGLTF INTERFACE IMPORTED)
 
 if(DEFINED ENV{CONDA_PREFIX})
     target_include_directories(TinyGLTF::TinyGLTF INTERFACE $ENV{CONDA_PREFIX}/include)
+    target_include_directories(tinyobjloader::tinyobjloader INTERFACE $ENV{CONDA_PREFIX}/include)
 endif()
 
 if(HIP)

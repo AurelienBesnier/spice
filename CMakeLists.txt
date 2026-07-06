@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 26)
 option(BUILD_TESTS "build c++ tests" OFF)
 option(BUILD_CXX_EXAMPLE "build c++ example" OFF)
 
+option(HIP "GPU support with HIP" OFF)
+
 # --- Build setup
 find_package(TBB CONFIG REQUIRED)
 find_package(Threads REQUIRED)
@@ -29,9 +31,12 @@ else()
   message(FATAL_ERROR "Could not find Embree")
 endif()
 
-
 # find tinyobjloader
 find_package(tinyobjloader CONFIG REQUIRED)
+
+if(HIP)
+    find_package(hiprt CONFIG REQUIRED)
+endif()
 
 add_subdirectory("src/cpp/include")
 

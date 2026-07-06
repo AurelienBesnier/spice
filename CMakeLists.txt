@@ -32,14 +32,26 @@ else()
 endif()
 
 # find tinyobjloader & tinygltf
-add_library(tinyobjloader::tinyobjloader INTERFACE IMPORTED)
+include(FetchContent)
 
-add_library(TinyGLTF::TinyGLTF INTERFACE IMPORTED)
+set(TINYOBJLOADER_BUILD_TEST_LOADER OFF CACHE INTERNAL "") 
 
-if(DEFINED ENV{CONDA_PREFIX})
-    target_include_directories(TinyGLTF::TinyGLTF INTERFACE $ENV{CONDA_PREFIX}/include)
-    target_include_directories(tinyobjloader::tinyobjloader INTERFACE $ENV{CONDA_PREFIX}/include)
-endif()
+FetchContent_Declare(
+    tinyobjloader
+    GIT_REPOSITORY https://github.com/tinyobjloader/tinyobjloader.git
+    GIT_TAG        release 
+)
+
+set(TINYGLTF_BUILD_EXAMPLES OFF CACHE INTERNAL "") 
+
+FetchContent_Declare(
+    tinygltf
+    GIT_REPOSITORY https://github.com/syoyo/tinygltf.git
+    GIT_TAG        release 
+)
+
+# Bring both packages into the build tree
+FetchContent_MakeAvailable(tinyobjloader tinygltf)
 
 if(HIP)
     find_package(hiprt CONFIG REQUIRED)

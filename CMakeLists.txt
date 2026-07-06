@@ -20,6 +20,7 @@ endif()
 # apple newer C++ features with old SDK
 if(APPLE)
     set(CMAKE_CXX_FLAGS "${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
 endif()
 
 # Embree4

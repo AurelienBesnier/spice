@@ -76,7 +76,6 @@ dependencies = [
     "tbb",
     "tbb-devel",
     "tinyobjloader",
-    "tinygltf",
 ]
 
 [tool.setuptools_scm]

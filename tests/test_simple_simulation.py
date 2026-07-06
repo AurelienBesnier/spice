@@ -6,6 +6,7 @@ from openalea.spice import Vec3
 
 from openalea.spice.configuration import Configuration
 from openalea.spice.simulator import Simulator
+import shutil
 
 filepath = pathlib.Path(__file__).parent.resolve() / 'data'
 
@@ -84,6 +85,8 @@ def test_simple_simulation():
                                str(filepath / "point_calibration.csv"))
 
     simulator.results.writeResults()
+    shutil.rmtree('./results')
+
 
 @pytest.mark.skip(reason="Segfault with pytest")
 def test_visualization():

@@ -59,7 +59,7 @@ set_target_properties(pm
         )
 
 
-target_link_libraries(pm INTERFACE TBB::tbb OpenMP::OpenMP_CXX tinyobjloader embree Threads::Threads photon_map primitive triangle image)
+target_link_libraries(pm INTERFACE TBB::tbb OpenMP::OpenMP_CXX embree Threads::Threads photon_map primitive triangle image)
 
 # wrapper
 add_subdirectory("src/python/")

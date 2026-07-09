@@ -10,6 +10,7 @@ dependencies:
   - embree
   - make
   - cxx-compiler
+  - tinygltf
   - cmake
   - tbb
   - tbb-devel

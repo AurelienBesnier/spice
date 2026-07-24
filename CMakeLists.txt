@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 26)
 option(BUILD_TESTS "build c++ tests" OFF)
 option(BUILD_CXX_EXAMPLE "build c++ example" OFF)
 
-option(HIP "GPU support with HIP" OFF)
+option(HIP "GPU support with HIP" ON)
 
 # --- Build setup
 find_package(TBB CONFIG REQUIRED)
@@ -54,10 +54,6 @@ FetchContent_Declare(
 # Bring both packages into the build tree
 FetchContent_MakeAvailable(tinyobjloader tinygltf)
 
-if(HIP)
-    find_package(hiprt CONFIG REQUIRED)
-endif()
-
 add_subdirectory("src/cpp/include")
 
 # pm(photon_mapping)
@@ -73,6 +69,56 @@ set_target_properties(pm
 
 
 target_link_libraries(pm INTERFACE TBB::tbb OpenMP::OpenMP_CXX embree Threads::Threads photon_map primitive triangle image)
+
+if(HIP)
+    # find_path(HIPRT_INCLUDE_DIR 
+    #     NAMES hiprt/hiprt.h hiprt.h
+    #     HINTS ${HIPRT_ROOT}
+    #     PATH_SUFFIXES hiprt
+    # )
+
+    # find_library(HIPRT_LIBRARY 
+    #     HINTS ${HIPRT_ROOT}
+    #     PATH_SUFFIXES win64 linux64 lib
+    # )
+
+    # include(FindPackageHandleStandardArgs)
+    # find_package_handle_standard_args(HIPRT DEFAULT_MSG HIPRT_LIBRARY HIPRT_INCLUDE_DIR)
+    # if(HIPRT_FOUND)
+    #     target_include_directories(pm INTERFACE ${HIPRT_INCLUDE_DIR})
+    #     target_link_libraries(pm INTERFACE ${HIPRT_LIBRARY})
+    #     target_compile_definitions(pm INTERFACE HIP) # for preprocessor
+    # endif()
+
+    FetchContent_Declare(
+        hiprt
+        GIT_REPOSITORY https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT.git
+        GIT_TAG        main
+    )
+
+    FetchContent_Declare(
+        Orochi
+        GIT_REPOSITORY https://github.com/GPUOpen-LibrariesAndSDKs/Orochi.git
+        GIT_TAG        main 
+    )
+
+    FetchContent_MakeAvailable(hiprt Orochi)
+
+    FetchContent_GetProperties(Orochi SOURCE_DIR orochi_SRC_DIR)
+    FetchContent_GetProperties(hiprt SOURCE_DIR hiprt_SRC_DIR)
+
+    target_include_directories(pm INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${hiprt_SRC_DIR}          
+        ${hiprt_SRC_DIR}/hiprt
+        ${orochi_SRC_DIR}
+        ${orochi_SRC_DIR}/Orochi 
+    )
+
+    target_link_libraries(pm INTERFACE hiprt Orochi)
+    target_compile_definitions(pm INTERFACE HIP)
+
+endif()
 
 # wrapper
 add_subdirectory("src/python/")

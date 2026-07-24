@@ -16,4 +16,7 @@ find_package(nanobind CONFIG REQUIRED)
 
 nanobind_add_module(libspice LTO ext_photonmapping_nano.cpp)
 target_link_libraries(libspice PUBLIC tinyobjloader tinygltf embree OpenMP::OpenMP_CXX pm)
-#endif()
+
+if(HIP)
+    target_link_libraries(libspice INTERFACE hiprt Orochi)
+endif()

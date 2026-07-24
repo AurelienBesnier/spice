@@ -1,6 +1,11 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#ifdef HIP
+#include <hiprt/hiprt.h>
+#include <Orochi/Orochi.h>
+#endif 
+
 #include <embree4/rtcore.h>
 #include <filesystem>
 #include <optional>
@@ -15,6 +20,8 @@
 #include <tiny_gltf.h>
 #include "core.hpp"
 #include "primitive.hpp"
+
+#ifndef HIP
 
 void
 intersectionFilter(const RTCFilterFunctionNArguments* args)
@@ -50,6 +57,8 @@ intersectionFilter(const RTCFilterFunctionNArguments* args)
                 valid[0] = 0;
         }
 }
+
+#endif
 
 /**
  * @brief Creates a default Lambert BxDF.
@@ -195,10 +204,19 @@ createTubeLight(Vec3f emission, Triangle* tri, Vec3f direction, float angle)
 class Scene
 {
       private:
+#ifdef HIP
+        hiprtContext context = nullptr;
+        hiprtGeometry geometry = nullptr;
+        hiprtScene scene = nullptr;
+
+        // GPU buffers
+        oroDeviceptr d_vertices = 0;
+        oroDeviceptr d_indices = 0;
+#else     
         // embree
         RTCDevice device{}; ///< The embree device to use
         RTCScene scene{};   ///< The embree scene
-
+#endif
         /**
          * @brief Whether a face is light source or not
          * @param faceID the id of the face
@@ -243,8 +261,13 @@ class Scene
         ~Scene()
         {
                 clear();
+#ifdef HIP 
+                hiprtDestroyScene(context, scene);
+                hiprtDestroyContext(context);
+#else
                 rtcReleaseScene(scene);
                 rtcReleaseDevice(device);
+#endif
         }
 
         /**
@@ -1056,6 +1079,140 @@ class Scene
 
         std::vector<Triangle> getTriangles() const { return triangles; }
 
+
+#ifdef HIP
+    void build(bool back_face_culling = true)
+        {
+#ifdef __OUTPUT__
+        std::cout << "[Scene] building HIPRT scene on GPU..." << std::endl;
+#endif
+
+        if (!context) {
+            std::cerr << "Error: hiprtContext is not initialized!" << std::endl;
+            return;
+        }
+
+        size_t vertexBufferSize = vertices.size() * sizeof(float);
+        size_t indexBufferSize  = indices.size() * sizeof(uint32_t);
+
+        oroMalloc(&d_vertices, vertexBufferSize);
+        oroMalloc(&d_indices, indexBufferSize);
+
+        oroMemcpyHtoD(d_vertices, (void*)vertices.data(), vertexBufferSize);
+        oroMemcpyHtoD(d_indices, (void*)indices.data(), indexBufferSize);
+
+        hiprtTriangleMeshPrimitive meshInput{};
+        meshInput.triangleCount       = nFaces();
+        meshInput.triangleIndices     = reinterpret_cast<void*>(d_indices);
+        meshInput.triangleStride      = 3 * sizeof(uint32_t);
+        meshInput.triangleIndexFormat = hiprtTriangleFormatUint3;
+
+        meshInput.vertexCount         = nVertices();
+        meshInput.vertices            = reinterpret_cast<void*>(d_vertices);
+        meshInput.vertexStride         = 3 * sizeof(float);
+
+        hiprtGeometryBuildInput geomInput{};
+        geomInput.type = hiprtPrimitiveTypeTriangleMesh;
+        geomInput.primitive.triangleMesh = meshInput;
+
+        hiprtBuildOptions buildOptions{};
+        buildOptions.buildFlags = hiprtBuildFlagBitPreferBalanced; // Equivalent to MEDIUM quality
+
+        size_t geomTempSize = 0;
+        hiprtGetGeometryBuildTemporaryBufferSize(context, geomInput, buildOptions, geomTempSize);
+
+        oroDeviceptr d_geomTemp = 0;
+        oroMalloc(&d_geomTemp, geomTempSize);
+
+        hiprtCreateGeometry(context, geomInput, buildOptions, geometry);
+        hiprtBuildGeometry(
+            context,
+            hiprtBuildOperationBuild,
+            geomInput,
+            buildOptions,
+            reinterpret_cast<void*>(d_geomTemp),
+            0, // stream
+            geometry
+        );
+
+        oroFree(d_geomTemp);
+
+        hiprtSceneBuildInput sceneInput{};
+        sceneInput.instanceCount = 1;
+        sceneInput.instances = reinterpret_cast<void*>(&geometry);
+
+        size_t sceneTempSize = 0;
+        hiprtGetSceneBuildTemporaryBufferSize(context, sceneInput, buildOptions, sceneTempSize);
+
+        oroDeviceptr d_sceneTemp = 0;
+        oroMalloc(&d_sceneTemp, sceneTempSize);
+
+        hiprtCreateScene(context, sceneInput, buildOptions, scene);
+        hiprtBuildScene(
+            context,
+            hiprtBuildOperationBuild,
+            sceneInput,
+            buildOptions,
+            reinterpret_cast<void*>(d_sceneTemp),
+            0, // stream
+            scene
+        );
+        
+        // cleanup
+        oroFree(d_sceneTemp);
+        }
+
+        /**
+        * @brief Device-side intersection function using HIPRT
+        * @param scene The HIPRT scene handle (hiprtScene)
+        * @param ray The input Ray object
+        * @param info Output intersection details
+        * @return True if a hit was found
+        */
+        __global__ bool intersect(const Ray& ray, IntersectInfo& info) const
+        {
+        hiprtRay hipRay;
+        hipRay.origin    = make_float3(ray.origin[0], ray.origin[1], ray.origin[2]);
+        hipRay.direction = make_float3(ray.direction[0], ray.direction[1], ray.direction[2]);
+        hipRay.minT      = this->tnear;
+        hipRay.maxT      = hiprtFloatMax; 
+
+        hiprtSceneTraversalClosest tr(scene, hipRay, hiprtFullRayMask);
+
+        hiprtHit hit = tr.getNextHit();
+
+        if (hit.hasHit()) 
+        {
+                info.t = hit.t;
+
+                int triId = hit.primID;
+
+                const Triangle& tri = this->triangles[triId];
+
+                info.surfaceInfo.position = ray(info.t);
+                info.surfaceInfo.barycentric = Vec2f(hit.uv.x, hit.uv.y);
+                info.surfaceInfo.geometricNormal = tri.getGeometricNormal();
+
+                info.surfaceInfo.shadingNormal =
+                tri.computeShadingNormal(info.surfaceInfo.barycentric);
+
+                orthonormalBasis(
+                        info.surfaceInfo.shadingNormal,
+                        info.surfaceInfo.dpdu,
+                        info.surfaceInfo.dpdv
+                );
+
+                info.hitPrimitive = &this->primitives[triId];
+
+                return true;
+        }
+
+        return false;
+        }
+
+
+#else
+
         /**
          * @fn void build()
          * @brief Creates the embree scene with all the previous info.
@@ -1116,46 +1273,6 @@ class Scene
                 rtcCommitScene(scene);
         }
 
-        // void build_hiprt(hiprtContext context)
-        // {
-        //     std::cout << "[Scene] Building AMD HIP RT scene..." << std::endl;
-
-        //     float* d_vertices;
-        //     uint32_t* d_indices;
-        //     hipMalloc(&d_vertices, vertices.size() * sizeof(float));
-        //     hipMalloc(&d_indices, indices.size() * sizeof(uint32_t));
-        //     hipMemcpy(d_vertices, vertices.data(), vertices.size() * sizeof(float), hipMemcpyHostToDevice);
-        //     hipMemcpy(d_indices, indices.data(), indices.size() * sizeof(uint32_t), hipMemcpyHostToDevice);
-
-        //     hiprtTriangleMeshPrimitive meshGeom = {};
-        //     meshGeom.vertices = d_vertices;
-        //     meshGeom.vertexCount = nVertices();
-        //     meshGeom.vertexStride = 3 * sizeof(float);
-        //     meshGeom.triangleIndices = d_indices;
-        //     meshGeom.triangleCount = nFaces();
-        //     meshGeom.triangleStride = 3 * sizeof(uint32_t);
-
-        //     hiprtGeometryBuildInput input = {};
-        //     input.type = hiprtGeometryTypeTriangleMesh;
-        //     input.primitive.triangleMesh = meshGeom;
-
-        //     hiprtBuildOptions options = {};
-        //     options.buildFlags = hiprtBuildFlagHintFastTrace;
-
-        //     hiprtGeometry geometry;
-        //     hiprtCreateGeometry(context, &input, &options, &geometry);
-
-        //     size_t scratchSize;
-        //     hiprtGetGeometryBuildTemporaryBufferSize(context, &input, &options, &scratchSize);
-            
-        //     void* d_scratch;
-        //     hipMalloc(&d_scratch, scratchSize);
-
-        //     hiprtBuildGeometry(context, hiprtBuildOperationBuild, &input, &options, d_scratch, nullptr, geometry);
-
-        //     hipFree(d_scratch);
-            
-        // }
 
         /**
          * @fn bool intersect(const Ray &ray, IntersectInfo &info) const
@@ -1220,6 +1337,8 @@ class Scene
                         return false;
                 }
         }
+
+#endif
 
         /**
          * @fn size_t nLights() const

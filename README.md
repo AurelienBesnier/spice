@@ -64,3 +64,21 @@ original git: [https://github.com/yumcyaWiz/photon_mapping](https://github.com/y
 * Veach, Eric. Robust Monte Carlo methods for light transport simulation. Stanford University, 1998.
 * [Christensen, Per H. "Faster photon map global illumination." Journal of graphics tools 4.3 (1999): 1-10.](https://doi.org/10.1080/10867651.1999.10487505)
 * [Hachisuka, Toshiya, Jacopo Pantaleoni, and Henrik Wann Jensen. "A path space extension for robust light transport simulation." ACM Transactions on Graphics (TOG) 31.6 (2012): 1-10.](https://dl.acm.org/doi/10.1145/2366145.2366210)
+
+
+### GPU
+> [!WARNING]
+> [WIP]
+> Must be build locally.
+
+Download the latest release of [HIPRT](https://gpuopen.com/hiprt/)
+
+#### Linux example
+
+```
+pip install . -Ccmake.define.HIPRT_ROOT="/path/to/sdk/" -Ccmake.define.HIPRT_INCLUDE_DIR="/path/to/sdk/" -Ccmake.define.HIPRT_LIBRARY="/path/to/sdk/hiprt/linux64/" -v
+```
+
+OR
+
+Use the docker image `Dockerfile.hip`

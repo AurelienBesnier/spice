@@ -12,10 +12,10 @@ filepath = pathlib.Path(__file__).parent.resolve() / 'data'
 
 def test_configuration():
     simulator = Simulator(config_file=filepath / "simulation.ini")
-    assert type(simulator.configuration) == Configuration
+    assert type(simulator.configuration) is Configuration
 
     simulator.configuration.read_file(filepath / "simulation_2.ini")
-    assert type(simulator.configuration) == Configuration
+    assert type(simulator.configuration) is Configuration
     assert simulator.configuration.KEEP_ALL == 0
 
     try:

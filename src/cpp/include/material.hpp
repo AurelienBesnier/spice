@@ -4,7 +4,6 @@
 #include "core.hpp"
 #include "sampler.hpp"
 #include <cmath>
-#include <memory>
 
 struct Material
 {

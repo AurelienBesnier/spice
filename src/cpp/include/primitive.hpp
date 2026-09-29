@@ -1,7 +1,6 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H
 
-#include <cmath>
 #include <memory>
 #include <vector>
 

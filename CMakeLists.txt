@@ -36,26 +36,23 @@ else()
 endif()
 
 # find tinyobjloader & tinygltf
-include(FetchContent)
 
-set(TINYOBJLOADER_BUILD_TEST_LOADER OFF CACHE INTERNAL "") 
+find_package(tinyobjloader REQUIRED)
+### NOTE: tinygltf on conda is only the .h file so 
+### it cannot be found with cmake find_package
 
-FetchContent_Declare(
-    tinyobjloader
-    GIT_REPOSITORY https://github.com/tinyobjloader/tinyobjloader.git
-    GIT_TAG        release 
-)
+# find_package(tinygltf REQUIRED)
+# include(FetchContent)
 
-set(TINYGLTF_BUILD_EXAMPLES OFF CACHE INTERNAL "") 
+# set(TINYGLTF_BUILD_EXAMPLES OFF CACHE INTERNAL "") 
 
-FetchContent_Declare(
-    tinygltf
-    GIT_REPOSITORY https://github.com/syoyo/tinygltf.git
-    GIT_TAG        v2.9.7
-)
+# FetchContent_Declare(
+#     tinygltf
+#     GIT_REPOSITORY https://github.com/syoyo/tinygltf.git
+#     GIT_TAG        v2.9.7
+# )
 
-# Bring both packages into the build tree
-FetchContent_MakeAvailable(tinyobjloader tinygltf)
+# FetchContent_MakeAvailable(tinygltf)
 
 if(HIP)
     find_package(hiprt CONFIG REQUIRED)

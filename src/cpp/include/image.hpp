@@ -1,6 +1,10 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#include <algorithm>
+
+#include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 

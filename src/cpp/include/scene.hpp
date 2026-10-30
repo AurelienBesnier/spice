@@ -3,6 +3,7 @@
 
 #include <embree4/rtcore.h>
 #include <filesystem>
+#include <optional>
 #include <string>
 #include <omp.h>
 

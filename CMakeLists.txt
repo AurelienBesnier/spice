@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(photon_mapping LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_CXX_STANDARD 23)
 
 option(BUILD_TESTS "build c++ tests" OFF)
 option(BUILD_CXX_EXAMPLE "build c++ example" OFF)
@@ -9,7 +9,9 @@ option(BUILD_CXX_EXAMPLE "build c++ example" OFF)
 option(HIP "GPU support with HIP" OFF)
 
 # --- Setting flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+if(NOT WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
 
 # --- Build setup
 find_package(TBB CONFIG REQUIRED)
@@ -42,17 +44,17 @@ find_package(tinyobjloader REQUIRED)
 ### it cannot be found with cmake find_package
 
 # find_package(tinygltf REQUIRED)
-# include(FetchContent)
+include(FetchContent)
 
-# set(TINYGLTF_BUILD_EXAMPLES OFF CACHE INTERNAL "") 
+set(TINYGLTF_BUILD_EXAMPLES OFF CACHE INTERNAL "") 
 
-# FetchContent_Declare(
-#     tinygltf
-#     GIT_REPOSITORY https://github.com/syoyo/tinygltf.git
-#     GIT_TAG        v2.9.7
-# )
+FetchContent_Declare(
+    tinygltf
+    GIT_REPOSITORY https://github.com/syoyo/tinygltf.git
+    GIT_TAG        v2.9.7
+)
 
-# FetchContent_MakeAvailable(tinygltf)
+FetchContent_MakeAvailable(tinygltf)
 
 if(HIP)
     find_package(hiprt CONFIG REQUIRED)

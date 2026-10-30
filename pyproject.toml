@@ -75,7 +75,7 @@ dependencies = [
     "llvm-openmp",
     "tbb",
     "tbb-devel",
-    "tinyobjloader",
+    "libtinyobjloader",
 ]
 
 [tool.setuptools_scm]

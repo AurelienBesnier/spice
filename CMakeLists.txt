@@ -9,7 +9,9 @@ option(BUILD_CXX_EXAMPLE "build c++ example" OFF)
 option(HIP "GPU support with HIP" OFF)
 
 # --- Setting flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+if(NOT WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
 
 # --- Build setup
 find_package(TBB CONFIG REQUIRED)
